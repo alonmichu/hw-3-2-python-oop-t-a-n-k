@@ -1,6 +1,10 @@
 from enum import Enum
 
 
+class IncorrectPromo(Exception):
+    pass
+
+
 class OrderStatus(Enum):  # Статусы заказа
     NEW = 1
     ASSEMBLY = 2
@@ -15,18 +19,26 @@ class Payment(Enum):  # Способы оплаты
 
 
 class Order:  # Заказ
-    def __init__(self, order_id, product_list=[], payment=Payment.CARD, promocode=None):
+    def __init__(self, order_id, promocode, product_list=[], payment=Payment.CARD):
         self.__order_id = order_id  # ID заказа
         self.__order_status = OrderStatus.NEW  # Статус заказа
         self.__product_list = product_list  # Список ProductShopAvaliability
         self.__starting_price = self.calculate_cost()  # Исходная цена заказа (без скидок)
         self.__payment = payment  # Способ оплаты
         self.__courier = None
+        f = True
+        while f:
+            try:
+                self.is_correct_promo(promocode)
+                f = False
+            except IncorrectPromo:
+                print("try again")
+                promocode = input()
         self.__promocode = promocode  # Промокод
-        if self.promocode is not None:  # Цена со скидкой
-            self.__total_price = self.apply_promocod()
-        else:
-            self.__total_price = self.starting_price
+        # if self.promocode is not None:  # Цена со скидкой
+        # self.__total_price = self.apply_promocod()
+        # else:
+        # self.__total_price = self.starting_price
 
     # Геттеры
     @property
@@ -86,21 +98,28 @@ class Order:  # Заказ
     def promocode(self, new_promocode):
         self.__promocode = new_promocode
 
+    @classmethod
+    def is_correct_promo(cls, promocode):
+        for i in range(len(promocode)):
+            if not promocode[i].isdigit():
+                raise IncorrectPromo()
+
     def calculate_cost(self):
         result = 0
         for i in self.product_list:
             result += i.price
         return result
 
-    def apply_promocod(self):
+    def apply_promocode(self):
         al = self.starting_price
-        return al + (al*self.promocode.precent/100)
+        return al + (al * self.promocode.precent / 100)
 
 
-order = Order('124')
+order = Order('124', 'incorrect')
 print(order.order_status)
 print(order.starting_price)
 order.starting_price = 100
 print(order.starting_price)
 order.product_list.append(2)
 print(order.product_list)
+print(order.__dict__)
