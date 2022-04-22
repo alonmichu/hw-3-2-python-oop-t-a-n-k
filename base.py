@@ -1,3 +1,7 @@
+class IncorrectInput(Exception):
+    pass
+
+
 class Base:
     @classmethod
     def is_correct_str(cls, s):

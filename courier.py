@@ -1,5 +1,6 @@
 # Класс курьер
 from enum import Enum
+from base import Base
 
 
 class Urgency(Enum):
@@ -14,10 +15,10 @@ class CourierStatus(Enum):
     RETURNSBACK = 3  # возвращается
 
 
-class Courier:
+class Courier(Base):
     def __init__(self, name, surname, age, cnt_order):
-        self._name = name
-        self._surname = surname
+        self._name = self.check_str(name)
+        self._surname = self.check_str(surname)
         self._age = age
         self._urgency = Urgency.ASAP
         self._status = CourierStatus.FREE
@@ -50,11 +51,11 @@ class Courier:
 
     @name.setter
     def name(self, new_name):
-        self._name = new_name
+        self._name = self.check_str(new_name)
 
     @surname.setter
     def surname(self, new_surname):
-        self._surname = new_surname
+        self._surname = self.check_str(new_surname)
 
     @age.setter
     def age(self, new_age):
@@ -75,17 +76,15 @@ class Courier:
     def check_workload(self):
         if (self._urgency == Urgency.ASAP
             or self._urgency == Urgency.ONTIME) \
-           and self._cnt_order < 5:
+                and self._cnt_order < 5:
             return True
         if self._urgency == Urgency.URGENT and self._cnt_order == 1:
             return True
         return False
 
+    def check_status(self):
+        print("Now my status is: "+str(self._status))
 
-courier = Courier("Stepan", "Musorskiy", 34, 0)
-print("Hello! I am ", courier.name, " ", courier.surname, courier.age, "y.o.")
-print()
-courier.surname = "Mussorgsky"
-print("Hello! I am ", courier.name, " ", courier.surname, courier.age, "y.o.")
-print("Now my status is: ", courier.status)
-print("What's about urgency? They said ", courier.urgency)
+    def __str__(self):
+        return f"Hello!I am {self._name} " \
+               f"{self._surname} {self._age} y.o."

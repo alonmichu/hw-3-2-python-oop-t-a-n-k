@@ -95,13 +95,3 @@ class Order:  # Заказ
     def apply_promocode(self):
         al = self.starting_price
         return al + (al * self.promocode.precent / 100)
-
-
-order = Order('124')
-print(order.order_status)
-print(order.starting_price)
-order.starting_price = 100
-print(order.starting_price)
-order.product_list.append(2)
-print(order.product_list)
-print(order.__dict__)
