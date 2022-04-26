@@ -3,6 +3,7 @@ from client import Client
 from product import Product
 from courier import Courier
 from order import Order
+from shop import Shop
 
 test = Product('choco1ate', 5, 'gfdfg')
 print(test.__dict__)
@@ -33,3 +34,7 @@ courier.surname = "Mussorgsky"
 print(courier)
 courier.check_status()
 print("What's about urgency? They said ", courier.urgency)
+
+shop_1 = Shop('Vkusvill', 1)
+shop_1.name = 'VkusVill'
+print(shop_1)
