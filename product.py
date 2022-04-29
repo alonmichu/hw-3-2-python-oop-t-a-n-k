@@ -3,9 +3,8 @@ from base import Base
 
 class Product(Base):
 
-    def __init__(self, product_name, product_id, description=''):
+    def __init__(self, product_name, description=''):
         self._name = self.check_str(product_name)
-        self._id = product_id
         self._description = description
         self._review_list = []
 

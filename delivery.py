@@ -5,13 +5,13 @@ from courier import Courier
 from order import Order
 from shop import Shop
 
-test = Product('choco1ate', 5, 'gfdfg')
+test = Product('choco1ate', 'gfdfg')
 print(test.__dict__)
 print(test)
 test.name = 'choco'
 print(test.__dict__)
 
-client_1 = Client('Vanya', 'Petrov', '987539487', 'Petr234@mail.ru', 8)
+client_1 = Client('Vanya', 'Petrov', '987539487', 'Petr234@mail.ru')
 print(client_1.__dict__)
 client_1.name = 'Ivan'
 client_1.phone = '9987524612'
@@ -35,6 +35,6 @@ print(courier)
 courier.check_status()
 print("What's about urgency? They said ", courier.urgency)
 
-shop_1 = Shop('Vkusvill', 1)
+shop_1 = Shop('Vkusvill')
 shop_1.name = 'VkusVill'
 print(shop_1)

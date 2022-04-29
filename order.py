@@ -15,8 +15,7 @@ class Payment(Enum):  # Способы оплаты
 
 
 class Order:  # Заказ
-    def __init__(self, order_id, promocode=None, product_list=[], payment=Payment.CARD):
-        self._order_id = order_id  # ID заказа
+    def __init__(self, promocode=None, product_list=[], payment=Payment.CARD):
         self._order_status = OrderStatus.NEW  # Статус заказа
         self._product_list = product_list  # Список ProductShopAvaliability
         self._starting_price = self.calculate_cost()  # Исходная цена заказа (без скидок)
@@ -29,10 +28,6 @@ class Order:  # Заказ
             self._total_price = self.starting_price
 
     # Геттеры
-    @property
-    def order_id(self):
-        return self._order_id
-
     @property
     def order_status(self):
         return self._order_status

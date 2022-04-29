@@ -4,12 +4,11 @@ from order import Order
 
 class Client(Base):
 
-    def __init__(self, name, surname, phone, mail, client_id):
+    def __init__(self, name, surname, phone, mail):
         self._name = self.check_str(name)
         self._surname = self.check_str(surname)
         self.__phone = phone
         self._mail = mail
-        self._client_id = client_id
         self._cart_list = []
         self.__promo_list = []
 
