@@ -1,6 +1,6 @@
 from base import Base
 from order import Order
-#from dataBase import add_orders, orders_base
+# from dataBase import add_orders, orders_base
 
 
 class Client(Base):
@@ -36,23 +36,23 @@ class Client(Base):
         return self.__phone
 
     @phone.setter
-    def phone(self, phone):
-        self.__phone = phone
+    def phone(self, new_phone):
+        self.__phone = new_phone
 
     @property
     def mail(self):
         return self._mail
 
     @mail.setter
-    def mail(self, mail):
-        self._mail = mail
+    def mail(self, new_mail):
+        self._mail = new_mail
 
     @property
     def cart_list(self):
         return self._cart_list
 
     @cart_list.setter
-    def mail(self, cart_elem):
+    def cart_list(self, cart_elem):
         self._cart_list += [cart_elem.id]
 
     @property
@@ -60,7 +60,7 @@ class Client(Base):
         return self.__promo_list
 
     @promo_list.setter
-    def mail(self, promo):
+    def promo_list(self, promo):
         self.__promo_list += [promo]
 
     # формирование отзыва
