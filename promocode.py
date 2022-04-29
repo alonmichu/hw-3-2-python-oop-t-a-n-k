@@ -30,9 +30,11 @@ class Promocode():
     def percent(self, new_percent):
         self._percent = new_percent
 
+    def add_user_who_used(self, user):
+        self._users_who_used += [user]
+
     def available(self, client):
         for i in range(len(self._users_who_used)):
             if client == self._users_who_used[i]:
                 return False
         return True
-
