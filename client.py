@@ -1,5 +1,6 @@
 from base import Base
 from order import Order
+#from dataBase import add_orders, orders_base
 
 
 class Client(Base):
@@ -71,28 +72,31 @@ class Client(Base):
         product.review_list = self.full_review(review)
 
     def add_to_cartlist(self, p_sh_av):
-        if self._cart_list != []:
-            if p_sh_av.shop == self._cart_list[0].shop:
+        if self._cart_list:
+            if p_sh_av.shop != self._cart_list[0].shop or \
+                    p_sh_av.amount == 0:
+                print(f"You can't add such product {p_sh_av}")
+            else:
                 self._cart_list.append(p_sh_av)
-        self._cart_list.append(p_sh_av)
+        else:
+            self._cart_list.append(p_sh_av)
 
     def del_from_cartlist(self, p_sh_av):
         try:
             self._cart_list.remove(p_sh_av)
             raise ValueError
         except ValueError:
-            print('No such element')
+            print(f'No such element {p_sh_av}')
 
     # формируем заказ
     def checkout(self, payment, promocode=None):
-        promo_avail = False
         if promocode is not None:
-            promo_avail = promocode.available(self)
-        if promo_avail is False:
-            promocode = None
-        order = Order(1, promocode, self._cart_list, payment)
+            if promocode.available(self) is False:
+                promocode = None
+        order = Order(promocode, self._cart_list, payment)
+        #add_orders(order)
         self._cart_list = []
         return order
 
     def __str__(self):
-        return f"{self._name}\n{self._surname}\n{self.__mail}"
+        return f"{self._name}\n{self._surname}\n{self._mail}"

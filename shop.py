@@ -3,9 +3,8 @@ from base import Base
 
 class Shop(Base):
 
-    def __init__(self, shop_name, shop_id):
+    def __init__(self, shop_name):
         self._name = self.check_str(shop_name)
-        self._id = shop_id
 
     @property
     def name(self):

@@ -30,3 +30,6 @@ class ProductShopAvailability:  # Зависимость продукт - зак
     @price.setter
     def price(self, new_price):
         self._price = new_price
+
+    def __str__(self):
+        return f"{self._product},{self._shop}"

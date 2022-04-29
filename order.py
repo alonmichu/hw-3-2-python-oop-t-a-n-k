@@ -1,4 +1,5 @@
 from enum import Enum
+from courier import Urgency
 
 
 class OrderStatus(Enum):  # Статусы заказа
@@ -15,13 +16,15 @@ class Payment(Enum):  # Способы оплаты
 
 
 class Order:  # Заказ
-    def __init__(self, promocode=None, product_list=[], payment=Payment.CARD):
+    def __init__(self, promocode=None, product_list=[],
+                 payment=Payment.CARD, urgency=Urgency.ASAP):
         self._order_status = OrderStatus.NEW  # Статус заказа
         self._product_list = product_list  # Список ProductShopAvaliability
         self._starting_price = self.calculate_cost()  # Исходная цена заказа (без скидок)
         self._payment = payment  # Способ оплаты
         self._courier = None
         self._promocode = promocode  # Промокод
+        self._urgency = urgency
         if self.promocode is not None:  # Цена со скидкой
             self._total_price = self.apply_promocode()
         else:
@@ -56,6 +59,10 @@ class Order:  # Заказ
     def product_list(self):
         return self._product_list
 
+    @property
+    def urgency(self):
+        return self._urgency
+
     # Сеттеры
     @order_status.setter
     def order_status(self, new_order_status):
@@ -81,6 +88,10 @@ class Order:  # Заказ
     def promocode(self, new_promocode):
         self._promocode = new_promocode
 
+    @urgency.setter
+    def urgency(self, new_urgency):
+        self._urgency = new_urgency
+
     def calculate_cost(self):
         result = 0
         for i in self.product_list:
@@ -90,3 +101,6 @@ class Order:  # Заказ
     def apply_promocode(self):
         al = self.starting_price
         return al + (al * self.promocode.precent / 100)
+
+    def __str__(self):
+        return f"{self._product_list}:{self._order_status}"

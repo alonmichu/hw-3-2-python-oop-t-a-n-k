@@ -34,4 +34,4 @@ class Product(Base):
         self._review_list += [review]
 
     def __str__(self):
-        return f"{self._name}:\n{self._description}"
+        return f"{self._name}:{self._description}"
