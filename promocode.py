@@ -8,7 +8,7 @@ class Promocode():
 
     @property
     def promocode_id(self):
-        return self._promocode
+        return self._promocode_id
 
     @property
     def users_who_used(self):
