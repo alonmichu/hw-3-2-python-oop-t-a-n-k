@@ -16,22 +16,14 @@ class CourierStatus(Enum):
 
 
 class Courier(Base):
-    def __init__(self, name, surname, age, cnt_order):
-        self._name = self.check_str(name)
-        self._surname = self.check_str(surname)
+    def __init__(self, name: str, surname: str, age: int, cnt_order: int):
+        self.name = self.check_str(name)
+        self.surname = self.check_str(surname)
         self._age = age
-        self._urgency = Urgency.ASAP
-        self._status = CourierStatus.FREE
+        self._urgency: Urgency = Urgency.ASAP
+        self._status: CourierStatus = CourierStatus.FREE
         # how many orders
         self._cnt_order = cnt_order
-
-    @property
-    def name(self):
-        return self._name
-
-    @property
-    def surname(self):
-        return self._surname
 
     @property
     def age(self):
@@ -49,31 +41,23 @@ class Courier(Base):
     def cnt_order(self):
         return self._cnt_order
 
-    @name.setter
-    def name(self, new_name):
-        self._name = self.check_str(new_name)
-
-    @surname.setter
-    def surname(self, new_surname):
-        self._surname = self.check_str(new_surname)
-
     @age.setter
-    def age(self, new_age):
+    def age(self, new_age: int):
         self._age = new_age
 
     @urgency.setter
-    def urgency(self, new_urgency):
+    def urgency(self, new_urgency: Urgency):
         self._urgency = new_urgency
 
     @status.setter
-    def status(self, new_status):
+    def status(self, new_status: CourierStatus):
         self._status = new_status
 
     @cnt_order.setter
-    def cnt_order(self, new_cnt_order):
+    def cnt_order(self, new_cnt_order: int):
         self._cnt_order = new_cnt_order
 
-    def check_workload(self):
+    def check_workload(self) -> bool:
         if (self._urgency == Urgency.ASAP
             or self._urgency == Urgency.ONTIME) \
                 and self._cnt_order < 5:
@@ -82,9 +66,9 @@ class Courier(Base):
             return True
         return False
 
-    def check_status(self):
-        print("Now my status is: "+str(self._status))
+    def check_status(self) -> str:
+        return "Now my status is: " + str(self._status)
 
     def __str__(self):
-        return f"Hello!I am {self._name} " \
-               f"{self._surname} {self._age} y.o."
+        return f"Hello!I am {self.name} " \
+               f"{self.surname} {self._age} y.o."

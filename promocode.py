@@ -1,14 +1,13 @@
 # Класс промокод
+from uuid import uuid4, UUID
+from typing import List
 
-class Promocode():
-    def __init__(self, promocode_id, users_who_used, percent):
-        self._promocode_id = promocode_id
+
+class Promocode:
+    def __init__(self, users_who_used: List[UUID], percent: int):
+        self.promocode_id: UUID = uuid4()
         self._users_who_used = users_who_used
         self._percent = percent
-
-    @property
-    def promocode_id(self):
-        return self._promocode_id
 
     @property
     def users_who_used(self):
@@ -18,23 +17,18 @@ class Promocode():
     def percent(self):
         return self._percent
 
-    @promocode_id.setter
-    def promocode_id(self, new_id):
-        self._promocode_id = new_id
-
     @users_who_used.setter
-    def users_who_used(self, new_users_list):
+    def users_who_used(self, new_users_list: List[UUID]):
         self._users_who_used = new_users_list
 
     @percent.setter
-    def percent(self, new_percent):
+    def percent(self, new_percent: int):
         self._percent = new_percent
 
-    def add_user_who_used(self, user):
+    def add_user_who_used(self, user: UUID) -> None:
         self._users_who_used += [user]
 
-    def available(self, client):
-        for i in range(len(self._users_who_used)):
-            if client == self._users_who_used[i]:
-                return False
+    def available(self, client: UUID) -> bool:
+        if client in self._users_who_used:
+            return False
         return True

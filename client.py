@@ -1,42 +1,29 @@
 from base import Base
-from order import Order
-# from dataBase import add_orders, orders_base
+from order import Order, Payment
+from product import Product
+from productShopAvailability import ProductShopAvailability
+from promocode import Promocode
+from uuid import uuid4, UUID
+from typing import List
 
 
 class Client(Base):
 
-    def __init__(self, name, surname, phone, mail):
-        self._name = self.check_str(name)
-        self._surname = self.check_str(surname)
+    def __init__(self, name: str, surname: str, phone: str, mail: str):
+        self.id: UUID = uuid4()
+        self.name = self.check_str(name)
+        self.surname = self.check_str(surname)
         self.__phone = phone
         self._mail = mail
-        self._cart_list = []
-        self.__promo_list = []
-
-    @property
-    def name(self):
-        return self._name
-
-    @name.setter
-    def name(self, new_name):
-        self.check_str(new_name)
-        self._name = new_name
-
-    @property
-    def surname(self):
-        return self._surname
-
-    @surname.setter
-    def surname(self, new_surname):
-        self.check_str(new_surname)
-        self._surname = new_surname
+        self._cart_list: List[ProductShopAvailability] = []
+        self._promo_list: List[Promocode] = []
 
     @property
     def phone(self):
         return self.__phone
 
     @phone.setter
-    def phone(self, new_phone):
+    def phone(self, new_phone: str):
         self.__phone = new_phone
 
     @property
@@ -44,7 +31,7 @@ class Client(Base):
         return self._mail
 
     @mail.setter
-    def mail(self, new_mail):
+    def mail(self, new_mail: str):
         self._mail = new_mail
 
     @property
@@ -52,51 +39,52 @@ class Client(Base):
         return self._cart_list
 
     @cart_list.setter
-    def cart_list(self, cart_elem):
+    def cart_list(self, cart_elem: ProductShopAvailability):
         self._cart_list += [cart_elem.id]
 
     @property
     def promo_list(self):
-        return self.__promo_list
+        return self._promo_list
 
     @promo_list.setter
-    def promo_list(self, promo):
-        self.__promo_list += [promo]
+    def promo_list(self, promo: Promocode):
+        self._promo_list += [promo]
 
     # формирование отзыва
-    def full_review(self, review):
-        return f"{self._name} {self._surname}:" + review
+    def full_review(self, review: str) -> str:
+        return f"{self.name} {self.surname}:" + review
 
     # добавление отзыва на конкретный продукт
-    def add_review(self, product, review):
+    def add_review(self, product: Product, review: str) -> None:
         product.review_list = self.full_review(review)
 
-    def add_to_cartlist(self, p_sh_av):
+    def add_to_cartlist(self, product_shop_availability: ProductShopAvailability) -> None:
         if self._cart_list:
-            if p_sh_av.shop != self._cart_list[0].shop or \
-                    p_sh_av.amount == 0:
-                print(f"You can't add such product {p_sh_av}")
+            if product_shop_availability.shop != self._cart_list[0].shop or \
+                    product_shop_availability.amount == 0:
+                print(f"You can't add such product {product_shop_availability}")
             else:
-                self._cart_list.append(p_sh_av)
+                self._cart_list.append(product_shop_availability)
         else:
-            self._cart_list.append(p_sh_av)
+            self._cart_list.append(product_shop_availability)
 
-    def del_from_cartlist(self, p_sh_av):
-        try:
-            self._cart_list.remove(p_sh_av)
-            raise ValueError
-        except ValueError:
-            print(f'No such element {p_sh_av}')
+    def del_from_cartlist(self, product_shop_availability: ProductShopAvailability) -> None:
+        if product_shop_availability in self._cart_list:
+            self._cart_list.remove(product_shop_availability)
+        else:
+            print(f'No such product in cart_list{product_shop_availability}')
 
     # формируем заказ
-    def checkout(self, payment, promocode=None):
+    def checkout(self, payment: Payment, promocode: Promocode = None) -> Order:
         if promocode is not None:
-            if promocode.available(self) is False:
+            if promocode.available(self.id) is False\
+                    or promocode not in self._promo_list:
                 promocode = None
-        order = Order(promocode, self._cart_list, payment)
-        #add_orders(order)
+            else:
+                promocode.add_user_who_used(self.id)
+        order = Order(self._cart_list, promocode, payment)
         self._cart_list = []
         return order
 
     def __str__(self):
-        return f"{self._name}\n{self._surname}\n{self._mail}"
+        return f"{self.name}\n{self.surname}\n{self._mail}"
