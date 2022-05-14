@@ -74,17 +74,5 @@ class Client(Base):
         else:
             print(f'No such product in cart_list{product_shop_availability}')
 
-    # формируем заказ
-    def checkout(self, payment: Payment, promocode: Promocode = None) -> Order:
-        if promocode is not None:
-            if promocode.available(self.id) is False\
-                    or promocode not in self._promo_list:
-                promocode = None
-            else:
-                promocode.add_user_who_used(self.id)
-        order = Order(self._cart_list, promocode, payment)
-        self._cart_list = []
-        return order
-
     def __str__(self):
         return f"{self.name}\n{self.surname}\n{self._mail}"

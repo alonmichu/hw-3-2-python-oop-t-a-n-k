@@ -4,16 +4,12 @@ from typing import Dict, Callable, Union, List
 from uuid import UUID
 
 from client import Client
-# from utils import get_logger
 from courier import Courier, Urgency
 from order import Order, Payment
 from product import Product
 from productShopAvailability import ProductShopAvailability
 from promocode import Promocode
 from shop import Shop
-
-
-# logger = get_logger(__name__)
 
 
 class SingletonMeta(type):
@@ -33,9 +29,7 @@ class Container:
     def delete(self, identifier: UUID) -> bool:
         if identifier in self._container:
             del self._container[identifier]
-            # logger.debug(f'{identifier} successfully found and deleted from container')
             return True
-        # logger.debug(f'{identifier} not found in container')
         return False
 
     def __delitem__(self, key: UUID) -> bool:
@@ -43,13 +37,10 @@ class Container:
 
     def add(self, identifier: UUID, obj, update: bool = False) -> Union[None, Callable]:
         if type(obj) != self._obj_type:
-            # logger.warning(f'Types mismatched ({identifier})')
             return None
         if identifier in self._container:
-            # logger.info(f'Object with {identifier} already exists!')
             if update:
                 self._container[identifier] = obj
-                # logger.info(f'Object was overwritten')
                 return obj
             return None
         else:
@@ -71,14 +62,12 @@ class PythonDb(metaclass=SingletonMeta):
         self.orders: Container = Container(Order)
         self.products: Container = Container(ProductShopAvailability)
         self.couriers: Container = Container(Courier)
-        # self.shops: Container = Container(Shop)
         self.clients: Container = Container(Client)
 
         self._obj_container = {
             Order: self.orders,
             ProductShopAvailability: self.products,
             Courier: self.couriers,
-            # Shop: self.shops,
             Client: self.clients,
         }
         self._uuid_container: Dict[UUID] = dict()
@@ -88,7 +77,7 @@ class PythonDb(metaclass=SingletonMeta):
         def wrapper(self, *args, **kwargs):
             res = func(self, *args, **kwargs)
             if res is not None:
-                self._uuid_container[res._id] = self._obj_container[type(res)]
+                self._uuid_container[res.id] = self._obj_container[type(res)]
             return res
 
         return wrapper
@@ -97,8 +86,8 @@ class PythonDb(metaclass=SingletonMeta):
     def create_from_obj(self, obj: Union[Order, ProductShopAvailability, Courier, Client]) \
             -> Union[Order, ProductShopAvailability, Courier, Client, None]:
         if type(obj) in self._obj_container:
-            self._obj_container[type(obj)].add(obj._id, obj)
-            return self._obj_container[type(obj)].find(obj._id)
+            self._obj_container[type(obj)].add(obj.id, obj)
+            return self._obj_container[type(obj)].find(obj.id)
 
     @_add_uuid
     def create_product(self, product: Product, shop: Union[Shop, UUID], amount: int, price: float) \
@@ -147,3 +136,15 @@ class PythonDb(metaclass=SingletonMeta):
         )
 
         return self.orders.add(order.id, order)
+
+    # формируем заказ
+    def checkout(self, client: Client, payment: Payment, promocode: Promocode = None) -> Order:
+        if promocode is not None:
+            if promocode.available(client.id) is False \
+                    or promocode not in client.promo_list:
+                promocode = None
+            else:
+                promocode.add_user_who_used(client.id)
+        order = self.create_order(client.cart_list, promocode, payment)
+        client.cart_list = []
+        return order
