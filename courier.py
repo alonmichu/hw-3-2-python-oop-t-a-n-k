@@ -1,6 +1,7 @@
 # Класс курьер
 from enum import Enum
 from base import Base
+from uuid import UUID, uuid4
 
 
 class Urgency(Enum):
@@ -17,6 +18,7 @@ class CourierStatus(Enum):
 
 class Courier(Base):
     def __init__(self, name: str, surname: str, age: int, cnt_order: int):
+        self.id: UUID = uuid4()
         self.name = self.check_str(name)
         self.surname = self.check_str(surname)
         self._age = age

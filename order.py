@@ -6,6 +6,7 @@ from typing import List
 from productShopAvailability import ProductShopAvailability
 from decimal import Decimal
 from courier import Courier
+from datetime import datetime
 
 
 class OrderStatus(Enum):  # Статусы заказа
@@ -32,6 +33,7 @@ class Order:  # Заказ
         self._courier = None
         self._promocode = promocode
         self._urgency = urgency
+        self._date_create = datetime.now()
         if self.promocode is not None:
             self._total_price = self.apply_promocode()
         else:

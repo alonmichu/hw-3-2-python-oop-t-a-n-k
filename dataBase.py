@@ -1,73 +1,149 @@
-import sqlite3 as sql
+from decimal import Decimal
+from functools import wraps
+from typing import Dict, Callable, Union, List
+from uuid import UUID
 
-db = sql.connect('data.db')
-c = db.cursor()
-c.execute("""CREATE TABLE IF NOT EXISTS clients(
-   client_id INT PRIMARY KEY,
-   client BLOB);
-""")
-db.commit()
-c.execute("""CREATE TABLE IF NOT EXISTS couriers(
-   courier_id INT PRIMARY KEY,
-   courier BLOB);
-""")
-db.commit()
-c.execute("""CREATE TABLE IF NOT EXISTS orders(
-    order_id INT PRIMARY KEY,
-    client_order BLOB);
-""")
-
-db.commit()
-c.execute("""CREATE TABLE IF NOT EXISTS availability(
-   product BLOB,
-   shop BLOB,
-   amount INTEGER,
-   price REAL);
-""")
-db.commit()
+from client import Client
+# from utils import get_logger
+from courier import Courier, Urgency
+from order import Order, Payment
+from product import Product
+from productShopAvailability import ProductShopAvailability
+from promocode import Promocode
+from shop import Shop
 
 
-def add_products(p_sh_a):
-    c.execute(f"INSERT INTO availability VALUES ('{p_sh_a.product}',"
-              f"'{p_sh_a.shop}','{p_sh_a.amount}',"
-              f"'{p_sh_a.price}')")
-    db.commit()
+# logger = get_logger(__name__)
 
 
-def product_base():
-    c.execute(f"SELECT rowid, * FROM availability")
-    items = c.fetchall()
-    return items
+class SingletonMeta(type):
+    _instance = None
+
+    def __call__(mcs, *args, **kwargs):
+        if not mcs._instance:
+            mcs._instance = super(SingletonMeta, mcs).__call__(*args, **kwargs)
+        return mcs._instance
 
 
-def add_clients(client):
-    c.execute("INSERT INTO clients VALUES(?);", client)
-    db.commit()
+class Container:
+    def __init__(self, obj_type):
+        self._obj_type = obj_type
+        self._container: Dict[UUID, obj_type] = dict()
+
+    def delete(self, identifier: UUID) -> bool:
+        if identifier in self._container:
+            del self._container[identifier]
+            # logger.debug(f'{identifier} successfully found and deleted from container')
+            return True
+        # logger.debug(f'{identifier} not found in container')
+        return False
+
+    def __delitem__(self, key: UUID) -> bool:
+        return self.delete(key)
+
+    def add(self, identifier: UUID, obj, update: bool = False) -> Union[None, Callable]:
+        if type(obj) != self._obj_type:
+            # logger.warning(f'Types mismatched ({identifier})')
+            return None
+        if identifier in self._container:
+            # logger.info(f'Object with {identifier} already exists!')
+            if update:
+                self._container[identifier] = obj
+                # logger.info(f'Object was overwritten')
+                return obj
+            return None
+        else:
+            self._container[identifier] = obj
+            return obj
+
+    def __setitem__(self, key, value) -> Union[None, Callable]:
+        return self.add(key, value)
+
+    def find(self, identifier: UUID) -> Union[Callable, None]:
+        return self._container.get(identifier, None)
+
+    def __getitem__(self, item) -> Union[Callable, None]:
+        return self.find(item)
 
 
-def clients_base():
-    c.execute(f"SELECT rowid, * FROM clients")
-    items = c.fetchall()
-    return items
+class PythonDb(metaclass=SingletonMeta):
+    def __init__(self):
+        self.orders: Container = Container(Order)
+        self.products: Container = Container(ProductShopAvailability)
+        self.couriers: Container = Container(Courier)
+        # self.shops: Container = Container(Shop)
+        self.clients: Container = Container(Client)
 
+        self._obj_container = {
+            Order: self.orders,
+            ProductShopAvailability: self.products,
+            Courier: self.couriers,
+            # Shop: self.shops,
+            Client: self.clients,
+        }
+        self._uuid_container: Dict[UUID] = dict()
 
-def add_couriers(courier):
-    c.execute("INSERT INTO couriers VALUES(?);", courier)
-    db.commit()
+    def _add_uuid(func):
+        @wraps(func)
+        def wrapper(self, *args, **kwargs):
+            res = func(self, *args, **kwargs)
+            if res is not None:
+                self._uuid_container[res._id] = self._obj_container[type(res)]
+            return res
 
+        return wrapper
 
-def couriers_base():
-    c.execute(f"SELECT rowid, * FROM couriers")
-    items = c.fetchall()
-    return items
+    @_add_uuid
+    def create_from_obj(self, obj: Union[Order, ProductShopAvailability, Courier, Client]) \
+            -> Union[Order, ProductShopAvailability, Courier, Client, None]:
+        if type(obj) in self._obj_container:
+            self._obj_container[type(obj)].add(obj._id, obj)
+            return self._obj_container[type(obj)].find(obj._id)
 
+    @_add_uuid
+    def create_product(self, product: Product, shop: Union[Shop, UUID], amount: int, price: float) \
+            -> Union[ProductShopAvailability, None]:
+        cur_product = ProductShopAvailability(
+            product=product,
+            shop=shop,
+            amount=amount,
+            price=Decimal(price),
+        )
+        return self.products.add(cur_product.id, cur_product)
 
-def add_orders(new_order):
-    c.execute("INSERT INTO orders VALUES(?);", new_order)
-    db.commit()
+    @_add_uuid
+    def create_courier(self, courier_name: str, courier_surname: str, age: int, cnt_order: int) \
+            -> Union[Courier, None]:
+        courier = Courier(
+            name=courier_name,
+            surname=courier_surname,
+            age=age,
+            cnt_order=cnt_order
 
+        )
 
-def orders_base():
-    c.execute(f"SELECT rowid, * FROM orders")
-    items = c.fetchall()
-    return items
+        return self.couriers.add(courier.id, courier)
+
+    @_add_uuid
+    def create_client(self, name: str, surname: str, phone: str, mail: str) \
+            -> Union[Client, None]:
+        client = Client(
+            name=name,
+            surname=surname,
+            phone=phone,
+            mail=mail
+        )
+        return self.users.add(client.id, client)
+
+    @_add_uuid
+    def create_order(self, product_list: List[ProductShopAvailability, UUID], promocode: Promocode = None,
+                     payment: Payment = Payment.CARD, urgency: Urgency = Urgency.ASAP) -> Union[Order, None]:
+
+        order = Order(
+            product_list=product_list,
+            promocode=promocode,
+            payment=payment,
+            urgency=urgency
+        )
+
+        return self.orders.add(order.id, order)
