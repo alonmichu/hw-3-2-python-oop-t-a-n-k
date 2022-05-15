@@ -12,7 +12,6 @@ class Urgency(Enum):
 class CourierStatus(Enum):
     FREE = 1  # свободен, как ветер, можно юзать
     DELIVERING = 2  # доставляет
-    RETURNSBACK = 3  # возвращается
 
 
 class Courier(Base):

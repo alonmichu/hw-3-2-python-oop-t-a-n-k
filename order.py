@@ -14,7 +14,6 @@ class OrderStatus(Enum):  # Статусы заказа
     ASSEMBLY = 2
     SENT = 3
     DELIVERED = 4
-    CANCELED = 5
 
 
 class Payment(Enum):  # Способы оплаты
@@ -23,7 +22,7 @@ class Payment(Enum):  # Способы оплаты
 
 
 class Order:  # Заказ
-    def __init__(self, order_id: UUID, product_list: List[ProductInOrder],
+    def __init__(self, order_id: UUID, address: str, product_list: List[ProductInOrder],
                  promocode: Promocode = None,
                  payment: Payment = Payment.CARD, urgency: Urgency = Urgency.ASAP):
         self.id = order_id
@@ -39,6 +38,7 @@ class Order:  # Заказ
             self._total_price = self.apply_promocode()
         else:
             self._total_price = self._starting_price
+        self.address = address
 
     # Геттеры
     @property
@@ -103,7 +103,7 @@ class Order:  # Заказ
         self._urgency = new_urgency
 
     @product_list.setter
-    def product_list(self, value:List):
+    def product_list(self, value: List):
         self._product_list = value
 
     def apply_promocode(self) -> Decimal:
@@ -121,5 +121,3 @@ class Order:  # Заказ
         return f"{self._product_list}:{self._order_status}\n" \
                f"starting price:{self._starting_price}\n" \
                f"total price:{self._total_price}"
-
-

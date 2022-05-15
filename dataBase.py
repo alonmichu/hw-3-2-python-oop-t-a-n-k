@@ -4,7 +4,7 @@ from typing import Dict, Callable, Union, List
 from uuid import UUID, uuid4
 
 from client import Client
-from courier import Courier, Urgency
+from courier import Courier, Urgency, CourierStatus
 from order import Order, Payment
 from product import Product
 from productShopAvailability import ProductShopAvailability, ProductInOrder
@@ -55,6 +55,12 @@ class Container:
 
     def __getitem__(self, item) -> Union[Callable, None]:
         return self.find(item)
+
+    def get_all(self):
+        return list(self._container.values())
+
+    def values(self):
+        return self._container.values()
 
 
 class PythonDb(metaclass=SingletonMeta):
@@ -121,7 +127,7 @@ class PythonDb(metaclass=SingletonMeta):
         ))
 
     @_add_uuid
-    def create_client(self, name: str, surname: str, phone: str, mail: str) \
+    def create_client(self, name: str, surname: str, phone: str, mail: str,address:str) \
             -> Union[Client, None]:
         client_uuid = uuid4()
         return self.clients.add(client_uuid, Client(
@@ -129,26 +135,12 @@ class PythonDb(metaclass=SingletonMeta):
             name=name,
             surname=surname,
             phone=phone,
-            mail=mail
+            mail=mail,
+            address=address
         ))
-    #
-    # @_add_uuid
-    # def create_order(self, product_list: List[Union[ProductShopAvailability, UUID]],
-    #                  promocode: Promocode = None, payment: Payment = Payment.CARD,
-    #                  urgency: Urgency = Urgency.ASAP) -> Union[Order, None]:
-    #     product_list = [product.id if isinstance(product, ProductShopAvailability)
-    #                     else product for product in product_list]
-    #     order_uuid = uuid4()
-    #     return self.orders.add(order_uuid, Order(
-    #         order_id=order_uuid,
-    #         product_list=product_list,
-    #         promocode=promocode,
-    #         payment=payment,
-    #         urgency=urgency
-    #     ))
 
     @_add_uuid
-    def create_order(self,
+    def create_order(self, address: str,
                      product_list: Union[List[ProductInOrder], None] = None,
                      client_obj: Union[Client, None] = None,
                      payment: Payment = Payment.CARD,
@@ -164,6 +156,7 @@ class PythonDb(metaclass=SingletonMeta):
         order_uuid = uuid4()
         return self.orders.add(order_uuid, Order(
             order_id=order_uuid,
+            address=address,
             product_list=product_list,
             promocode=promocode,
             payment=payment,
@@ -178,3 +171,17 @@ class PythonDb(metaclass=SingletonMeta):
             shop_id=shop_uuid,
             shop_name=name
         ))
+
+    def get_shops_list(self) -> List[Shop]:
+        return self.shops.get_all()
+
+    def get_products_in_shop(self, shop: Union[UUID, Shop]) -> List[ProductShopAvailability]:
+        shop_id = shop if isinstance(shop, UUID) else shop.id
+        return [product for product in self.products.values() if product.shop.id == shop_id]
+
+    def get_free_couriers(self, urgency: Urgency) -> List[Courier]:
+        available_couriers = []
+        for courier in self.couriers.values():
+            if courier.urgency == urgency and courier.status == CourierStatus.FREE:
+                available_couriers.append(courier)
+        return available_couriers
