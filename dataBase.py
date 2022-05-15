@@ -1,7 +1,7 @@
 from decimal import Decimal
 from functools import wraps
 from typing import Dict, Callable, Union, List
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from client import Client
 from courier import Courier, Urgency
@@ -58,17 +58,20 @@ class Container:
 
 
 class PythonDb(metaclass=SingletonMeta):
+
     def __init__(self):
         self.orders: Container = Container(Order)
         self.products: Container = Container(ProductShopAvailability)
         self.couriers: Container = Container(Courier)
         self.clients: Container = Container(Client)
+        self.shops: Container = Container(Shop)
 
         self._obj_container = {
             Order: self.orders,
             ProductShopAvailability: self.products,
             Courier: self.couriers,
             Client: self.clients,
+            Shop: self.shops,
         }
         self._uuid_container: Dict[UUID] = dict()
 
@@ -84,67 +87,71 @@ class PythonDb(metaclass=SingletonMeta):
 
     @_add_uuid
     def create_from_obj(self, obj: Union[Order, ProductShopAvailability, Courier, Client]) \
-            -> Union[Order, ProductShopAvailability, Courier, Client, None]:
+            -> Union[Order, ProductShopAvailability, Courier, Client, Shop, None]:
         if type(obj) in self._obj_container:
             self._obj_container[type(obj)].add(obj.id, obj)
             return self._obj_container[type(obj)].find(obj.id)
 
     @_add_uuid
-    def create_product(self, product: Product, shop: Union[Shop, UUID], amount: int, price: float) \
-            -> Union[ProductShopAvailability, None]:
-        cur_product = ProductShopAvailability(
-            product=product,
-            shop=shop,
-            amount=amount,
-            price=Decimal(price),
+    def create_product(self, product: Product, shop: Union[Shop, UUID], amount: int,
+                       price: float) -> Union[ProductShopAvailability, None]:
+        prod_uuid = uuid4()
+        return self.products.add(
+            prod_uuid,
+            ProductShopAvailability(
+                product_id=prod_uuid,
+                product=product,
+                shop=shop.id if isinstance(shop, Shop) else shop,
+                amount=amount,
+                price=Decimal(price),
+            )
         )
-        return self.products.add(cur_product.id, cur_product)
 
     @_add_uuid
     def create_courier(self, courier_name: str, courier_surname: str, age: int, cnt_order: int) \
             -> Union[Courier, None]:
-        courier = Courier(
+        courier_uuid = uuid4()
+        return self.couriers.add(courier_uuid, Courier(
+            courier_id=courier_uuid,
             name=courier_name,
             surname=courier_surname,
             age=age,
             cnt_order=cnt_order
 
-        )
-
-        return self.couriers.add(courier.id, courier)
+        ))
 
     @_add_uuid
     def create_client(self, name: str, surname: str, phone: str, mail: str) \
             -> Union[Client, None]:
-        client = Client(
+        client_uuid = uuid4()
+        return self.clients.add(client_uuid, Client(
+            client_id=client_uuid,
             name=name,
             surname=surname,
             phone=phone,
             mail=mail
-        )
-        return self.users.add(client.id, client)
+        ))
 
     @_add_uuid
-    def create_order(self, product_list: List[ProductShopAvailability, UUID], promocode: Promocode = None,
-                     payment: Payment = Payment.CARD, urgency: Urgency = Urgency.ASAP) -> Union[Order, None]:
-
-        order = Order(
+    def create_order(self, product_list: List[Union[ProductShopAvailability, UUID]],
+                     promocode: Promocode = None, payment: Payment = Payment.CARD,
+                     urgency: Urgency = Urgency.ASAP) -> Union[Order, None]:
+        product_list = [product.id if isinstance(product, ProductShopAvailability)
+                        else product for product in product_list]
+        order_uuid = uuid4()
+        return self.orders.add(order_uuid, Order(
+            order_id=order_uuid,
             product_list=product_list,
             promocode=promocode,
             payment=payment,
             urgency=urgency
-        )
+        ))
 
-        return self.orders.add(order.id, order)
+    @_add_uuid
+    def create_shop(self, name: str) -> Union[Shop, None]:
 
-    # формируем заказ
-    def checkout(self, client: Client, payment: Payment, promocode: Promocode = None) -> Order:
-        if promocode is not None:
-            if promocode.available(client.id) is False \
-                    or promocode not in client.promo_list:
-                promocode = None
-            else:
-                promocode.add_user_who_used(client.id)
-        order = self.create_order(client.cart_list, promocode, payment)
-        client.cart_list = []
-        return order
+        shop_uuid = uuid4()
+        return self.shops.add(shop_uuid, Shop(
+            shop_id=shop_uuid,
+            shop_name=name
+        ))
