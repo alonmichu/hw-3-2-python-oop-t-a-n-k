@@ -3,14 +3,14 @@ from order import Order, Payment
 from product import Product
 from productShopAvailability import ProductShopAvailability
 from promocode import Promocode
-from uuid import uuid4, UUID
+from uuid import UUID
 from typing import List
 
 
 class Client(Base):
 
-    def __init__(self, name: str, surname: str, phone: str, mail: str):
-        self.id: UUID = uuid4()
+    def __init__(self, client_id: UUID, name: str, surname: str, phone: str, mail: str):
+        self.id = client_id
         self.name = self.check_str(name)
         self.surname = self.check_str(surname)
         self.__phone = phone
@@ -73,6 +73,18 @@ class Client(Base):
             self._cart_list.remove(product_shop_availability)
         else:
             print(f'No such product in cart_list{product_shop_availability}')
+
+        # формируем заказ
+    def checkout(self, payment: Payment, promocode: Promocode = None) -> Order:
+        if promocode is not None:
+            if promocode.available(self.id) is False \
+                    or promocode not in self.promo_list:
+                promocode = None
+            else:
+                promocode.add_user_who_used(self.id)
+        order = self.create_order(self.cart_list, promocode, payment)
+        self.cart_list = []
+        return order
 
     def __str__(self):
         return f"{self.name}\n{self.surname}\n{self._mail}"

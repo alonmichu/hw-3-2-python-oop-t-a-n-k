@@ -1,12 +1,11 @@
 from product import Product
 from shop import Shop
 from decimal import Decimal
-from uuid import uuid4, UUID
 
 
 class ProductShopAvailability:  # Зависимость продукт - заказ
-    def __init__(self, product: Product, shop: Shop, amount: int, price: Decimal):
-        self.id: UUID = uuid4()
+    def __init__(self, product_id, product: Product, shop: Shop, amount: int, price: Decimal):
+        self.id = product_id
         self.product = product  # Продукт
         self.shop = shop  # Магазин
         self.amount = amount  # Количество продукта

@@ -1,6 +1,6 @@
 from enum import Enum
 from courier import Urgency
-from uuid import uuid4, UUID
+from uuid import UUID
 from promocode import Promocode
 from typing import List
 from productShopAvailability import ProductShopAvailability
@@ -23,9 +23,9 @@ class Payment(Enum):  # Способы оплаты
 
 
 class Order:  # Заказ
-    def __init__(self, product_list: List[ProductShopAvailability], promocode: Promocode = None,
+    def __init__(self, order_id: UUID, product_list: List[ProductShopAvailability], promocode: Promocode = None,
                  payment: Payment = Payment.CARD, urgency: Urgency = Urgency.ASAP):
-        self.id: UUID = uuid4()
+        self.id = order_id
         self._order_status: OrderStatus = OrderStatus.NEW
         self._product_list = product_list
         self._starting_price = self.calculate_cost()  # Исходная цена заказа (без скидок)
@@ -101,15 +101,15 @@ class Order:  # Заказ
     def urgency(self, new_urgency: Urgency):
         self._urgency = new_urgency
 
+    def apply_promocode(self) -> Decimal:
+        sale = Decimal(1 - self.promocode.percent / 100) * Decimal(1.00)
+        res = sale * self._starting_price
+        return res.quantize(Decimal('.01'))
+
     def calculate_cost(self) -> Decimal:
         res = Decimal(0)
         for i in self.product_list:
             res += i.price
-        return res.quantize(Decimal('.01'))
-
-    def apply_promocode(self) -> Decimal:
-        sale = Decimal(1 - self.promocode.percent / 100) * Decimal(1.00)
-        res = sale * self._starting_price
         return res.quantize(Decimal('.01'))
 
     def __str__(self):

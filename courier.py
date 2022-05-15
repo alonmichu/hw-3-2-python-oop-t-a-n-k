@@ -1,7 +1,6 @@
-
 from enum import Enum
 from base import Base
-from uuid import UUID, uuid4
+from uuid import UUID
 
 
 class Urgency(Enum):
@@ -17,8 +16,8 @@ class CourierStatus(Enum):
 
 
 class Courier(Base):
-    def __init__(self, name: str, surname: str, age: int, cnt_order: int):
-        self.id: UUID = uuid4()
+    def __init__(self, courier_id: UUID, name: str, surname: str, age: int, cnt_order: int):
+        self.id = courier_id
         self.name = self.check_str(name)
         self.surname = self.check_str(surname)
         self._age = age
@@ -74,4 +73,3 @@ class Courier(Base):
     def __str__(self):
         return f"Hello!I am {self.name} " \
                f"{self.surname} {self._age} y.o."
-    
