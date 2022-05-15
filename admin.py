@@ -1,19 +1,9 @@
 from promocode import Promocode
 from typing import List
 from client import Client
+from singleton import singleton
 
 # Класс администроатора
-
-
-def singleton(class_):
-    instances = {}
-
-    def getinstance(*args, **kwargs):
-        if class_ not in instances:
-            instances[class_] = class_(*args, **kwargs)
-        return instances[class_]
-
-    return getinstance
 
 
 @singleton

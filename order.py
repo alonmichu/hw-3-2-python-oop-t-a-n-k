@@ -102,6 +102,10 @@ class Order:  # Заказ
     def urgency(self, new_urgency: Urgency):
         self._urgency = new_urgency
 
+    @product_list.setter
+    def product_list(self, value:List):
+        self._product_list = value
+
     def apply_promocode(self) -> Decimal:
         sale = Decimal(1 - self.promocode.percent / 100) * Decimal(1.00)
         res = sale * self._starting_price
@@ -117,3 +121,5 @@ class Order:  # Заказ
         return f"{self._product_list}:{self._order_status}\n" \
                f"starting price:{self._starting_price}\n" \
                f"total price:{self._total_price}"
+
+
