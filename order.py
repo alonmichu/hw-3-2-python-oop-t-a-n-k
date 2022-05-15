@@ -3,7 +3,7 @@ from courier import Urgency
 from uuid import UUID
 from promocode import Promocode
 from typing import List
-from productShopAvailability import ProductShopAvailability
+from productShopAvailability import ProductShopAvailability, ProductInOrder
 from decimal import Decimal
 from courier import Courier
 from datetime import datetime
@@ -23,11 +23,12 @@ class Payment(Enum):  # Способы оплаты
 
 
 class Order:  # Заказ
-    def __init__(self, order_id: UUID, product_list: List[ProductShopAvailability], promocode: Promocode = None,
+    def __init__(self, order_id: UUID, product_list: List[ProductInOrder],
+                 promocode: Promocode = None,
                  payment: Payment = Payment.CARD, urgency: Urgency = Urgency.ASAP):
         self.id = order_id
         self._order_status: OrderStatus = OrderStatus.NEW
-        self._product_list = product_list
+        self._product_list: List[ProductInOrder] = product_list
         self._starting_price = self.calculate_cost()  # Исходная цена заказа (без скидок)
         self._payment = payment
         self._courier = None
@@ -108,8 +109,8 @@ class Order:  # Заказ
 
     def calculate_cost(self) -> Decimal:
         res = Decimal(0)
-        for i in self.product_list:
-            res += i.price
+        for product in self.product_list:
+            res += product.price * product.cnt
         return res.quantize(Decimal('.01'))
 
     def __str__(self):

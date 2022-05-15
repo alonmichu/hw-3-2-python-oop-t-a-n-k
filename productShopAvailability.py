@@ -13,3 +13,12 @@ class ProductShopAvailability:  # Зависимость продукт - зак
 
     def __str__(self):
         return f"{self.product},{self.shop}"
+
+
+class ProductInOrder(object):
+    def __init__(self, product: ProductShopAvailability, count: int):
+        self.id = product.id
+        self.shop = product.shop
+        self.amount = product.amount
+        self.price = product.price
+        self.cnt = count

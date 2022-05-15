@@ -7,7 +7,7 @@ from client import Client
 from courier import Courier, Urgency
 from order import Order, Payment
 from product import Product
-from productShopAvailability import ProductShopAvailability
+from productShopAvailability import ProductShopAvailability, ProductInOrder
 from promocode import Promocode
 from shop import Shop
 
@@ -131,13 +131,36 @@ class PythonDb(metaclass=SingletonMeta):
             phone=phone,
             mail=mail
         ))
+    #
+    # @_add_uuid
+    # def create_order(self, product_list: List[Union[ProductShopAvailability, UUID]],
+    #                  promocode: Promocode = None, payment: Payment = Payment.CARD,
+    #                  urgency: Urgency = Urgency.ASAP) -> Union[Order, None]:
+    #     product_list = [product.id if isinstance(product, ProductShopAvailability)
+    #                     else product for product in product_list]
+    #     order_uuid = uuid4()
+    #     return self.orders.add(order_uuid, Order(
+    #         order_id=order_uuid,
+    #         product_list=product_list,
+    #         promocode=promocode,
+    #         payment=payment,
+    #         urgency=urgency
+    #     ))
 
     @_add_uuid
-    def create_order(self, product_list: List[Union[ProductShopAvailability, UUID]],
-                     promocode: Promocode = None, payment: Payment = Payment.CARD,
+    def create_order(self,
+                     product_list: Union[List[ProductInOrder], None] = None,
+                     client_obj: Union[Client, None] = None,
+                     payment: Payment = Payment.CARD,
+                     promocode: Promocode = None,
                      urgency: Urgency = Urgency.ASAP) -> Union[Order, None]:
-        product_list = [product.id if isinstance(product, ProductShopAvailability)
-                        else product for product in product_list]
+
+        if product_list is None and client_obj is None:
+            return None
+
+        if product_list is None:
+            product_list = client_obj.cart_list
+
         order_uuid = uuid4()
         return self.orders.add(order_uuid, Order(
             order_id=order_uuid,

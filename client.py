@@ -1,10 +1,12 @@
+import uuid
+
 from base import Base
 from order import Order, Payment
 from product import Product
-from productShopAvailability import ProductShopAvailability
+from productShopAvailability import ProductShopAvailability, ProductInOrder
 from promocode import Promocode
 from uuid import UUID
-from typing import List
+from typing import List, Union
 
 
 class Client(Base):
@@ -15,7 +17,7 @@ class Client(Base):
         self.surname = self.check_str(surname)
         self.__phone = phone
         self._mail = mail
-        self._cart_list: List[ProductShopAvailability] = []
+        self._cart_list: List[ProductInOrder] = []
         self._promo_list: List[Promocode] = []
 
     @property
@@ -39,8 +41,8 @@ class Client(Base):
         return self._cart_list
 
     @cart_list.setter
-    def cart_list(self, cart_elem: ProductShopAvailability):
-        self._cart_list += [cart_elem.id]
+    def cart_list(self, cart_elem: ProductInOrder):
+        self._cart_list += [cart_elem]
 
     @property
     def promo_list(self):
@@ -58,23 +60,25 @@ class Client(Base):
     def add_review(self, product: Product, review: str) -> None:
         product.review_list = self.full_review(review)
 
-    def add_to_cartlist(self, product_shop_availability: ProductShopAvailability) -> None:
+    def add_to_cartlist(self, product: ProductShopAvailability, count: int) -> None:
         if self._cart_list:
-            if product_shop_availability.shop != self._cart_list[0].shop or \
-                    product_shop_availability.amount == 0:
-                print(f"You can't add such product {product_shop_availability}")
+            if product.shop != self._cart_list[0].shop or \
+                    product.amount == 0:
+                print(f"You can't add such product {product}")
             else:
-                self._cart_list.append(product_shop_availability)
+                self._cart_list.append(ProductInOrder(product, count))
         else:
-            self._cart_list.append(product_shop_availability)
+            self._cart_list.append(ProductInOrder(product, count))
 
-    def del_from_cartlist(self, product_shop_availability: ProductShopAvailability) -> None:
-        if product_shop_availability in self._cart_list:
-            self._cart_list.remove(product_shop_availability)
+    def del_from_cartlist(self, product: Union[ProductInOrder, ProductShopAvailability]) -> None:
+        cart_dict = {prod.id: i for i, prod in enumerate(self._cart_list)}
+
+        if product.id in cart_dict:
+            del self._cart_list[cart_dict[product.id]]
         else:
-            print(f'No such product in cart_list{product_shop_availability}')
+            print(f'No such product in cart_list{product}')
 
-        # формируем заказ
+    # формируем заказ
     def checkout(self, payment: Payment, promocode: Promocode = None) -> Order:
         if promocode is not None:
             if promocode.available(self.id) is False \
@@ -82,7 +86,14 @@ class Client(Base):
                 promocode = None
             else:
                 promocode.add_user_who_used(self.id)
-        order = self.create_order(self.cart_list, promocode, payment)
+
+        order = Order(
+            order_id=uuid.uuid4(),
+            product_list=self.cart_list,
+            promocode=promocode,
+            payment=payment,
+        )
+
         self.cart_list = []
         return order
 
