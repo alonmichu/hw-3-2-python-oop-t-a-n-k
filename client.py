@@ -1,7 +1,3 @@
-import uuid
-
-from base import Base
-from order import Order, Payment
 from product import Product
 from productShopAvailability import ProductShopAvailability, ProductInOrder
 from promocode import Promocode
@@ -9,13 +5,13 @@ from uuid import UUID
 from typing import List, Union
 
 
-class Client(Base):
+class Client:
 
-    def __init__(self, client_id: UUID, name: str, surname: str, phone: str, mail: str,address:str):
+    def __init__(self, client_id: UUID, name: str, surname: str, phone: str, mail: str, address: str):
         self.id = client_id
-        self.name = self.check_str(name)
-        self.surname = self.check_str(surname)
-        self.address=address
+        self.name = name
+        self.surname = surname
+        self.address = address
         self.__phone = phone
         self._mail = mail
         self._cart_list: List[ProductInOrder] = []
@@ -77,8 +73,10 @@ class Client(Base):
         if product.id in cart_dict:
             del self._cart_list[cart_dict[product.id]]
         else:
-            print(f'No such product in cart_list{product}')
+            print(f'No such product in cart_list {product}')
 
+    def clean_cart_list(self):
+        self._cart_list = []
 
     def __str__(self):
         return f"{self.name}\n{self.surname}\n{self._mail}"

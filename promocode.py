@@ -4,9 +4,9 @@ from typing import List
 
 
 class Promocode:
-    def __init__(self, users_who_used: List[UUID], percent: int):
+    def __init__(self, percent: int):
         self.promocode_id: UUID = uuid4()
-        self._users_who_used = users_who_used
+        self._users_who_used: List[UUID] = []
         self._percent = percent
 
     @property

@@ -114,20 +114,19 @@ class PythonDb(metaclass=SingletonMeta):
         )
 
     @_add_uuid
-    def create_courier(self, courier_name: str, courier_surname: str, age: int, cnt_order: int) \
-            -> Union[Courier, None]:
+    def create_courier(self, courier_name: str, courier_surname: str,
+                       age: int, urgency: Urgency = Urgency.ASAP) -> Union[Courier, None]:
         courier_uuid = uuid4()
         return self.couriers.add(courier_uuid, Courier(
             courier_id=courier_uuid,
             name=courier_name,
             surname=courier_surname,
             age=age,
-            cnt_order=cnt_order
-
+            urgency=urgency
         ))
 
     @_add_uuid
-    def create_client(self, name: str, surname: str, phone: str, mail: str,address:str) \
+    def create_client(self, name: str, surname: str, phone: str, mail: str, address: str) \
             -> Union[Client, None]:
         client_uuid = uuid4()
         return self.clients.add(client_uuid, Client(
@@ -140,18 +139,12 @@ class PythonDb(metaclass=SingletonMeta):
         ))
 
     @_add_uuid
-    def create_order(self, address: str,
-                     product_list: Union[List[ProductInOrder], None] = None,
-                     client_obj: Union[Client, None] = None,
+    def create_order(self, address: str, client_obj: Client,
                      payment: Payment = Payment.CARD,
                      promocode: Promocode = None,
                      urgency: Urgency = Urgency.ASAP) -> Union[Order, None]:
 
-        if product_list is None and client_obj is None:
-            return None
-
-        if product_list is None:
-            product_list = client_obj.cart_list
+        product_list = client_obj.cart_list
 
         order_uuid = uuid4()
         return self.orders.add(order_uuid, Order(
@@ -177,7 +170,7 @@ class PythonDb(metaclass=SingletonMeta):
 
     def get_products_in_shop(self, shop: Union[UUID, Shop]) -> List[ProductShopAvailability]:
         shop_id = shop if isinstance(shop, UUID) else shop.id
-        return [product for product in self.products.values() if product.shop.id == shop_id]
+        return [product for product in self.products.values() if product.shop == shop_id]
 
     def get_free_couriers(self, urgency: Urgency) -> List[Courier]:
         available_couriers = []

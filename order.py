@@ -66,12 +66,12 @@ class Order:  # Заказ
         return self._promocode
 
     @property
-    def product_list(self):
-        return self._product_list
-
-    @property
     def urgency(self):
         return self._urgency
+
+    @property
+    def product_list(self):
+        return self._product_list
 
     # Сеттеры
     @order_status.setter
@@ -103,7 +103,7 @@ class Order:  # Заказ
         self._urgency = new_urgency
 
     @product_list.setter
-    def product_list(self, value: List):
+    def product_list(self, value: List[ProductInOrder]):
         self._product_list = value
 
     def apply_promocode(self) -> Decimal:
@@ -118,6 +118,8 @@ class Order:  # Заказ
         return res.quantize(Decimal('.01'))
 
     def __str__(self):
-        return f"{self._product_list}:{self._order_status}\n" \
+        d = {prod.product_name: prod.cnt for prod in self.product_list}
+        return f"{d}:{self._order_status}\n" \
                f"starting price:{self._starting_price}\n" \
-               f"total price:{self._total_price}"
+               f"total price:{self._total_price}\n" \
+               f"courier:{self._courier}"
