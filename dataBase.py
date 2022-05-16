@@ -7,7 +7,7 @@ from client import Client
 from courier import Courier, Urgency, CourierStatus
 from order import Order, Payment
 from product import Product
-from productShopAvailability import ProductShopAvailability, ProductInOrder
+from productShopAvailability import ProductShopAvailability
 from promocode import Promocode
 from shop import Shop
 
