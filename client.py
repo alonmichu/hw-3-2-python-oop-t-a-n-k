@@ -11,10 +11,11 @@ from typing import List, Union
 
 class Client(Base):
 
-    def __init__(self, client_id: UUID, name: str, surname: str, phone: str, mail: str):
+    def __init__(self, client_id: UUID, name: str, surname: str, phone: str, mail: str,address:str):
         self.id = client_id
         self.name = self.check_str(name)
         self.surname = self.check_str(surname)
+        self.address=address
         self.__phone = phone
         self._mail = mail
         self._cart_list: List[ProductInOrder] = []
@@ -78,24 +79,6 @@ class Client(Base):
         else:
             print(f'No such product in cart_list{product}')
 
-    # формируем заказ
-    def checkout(self, payment: Payment, promocode: Promocode = None) -> Order:
-        if promocode is not None:
-            if promocode.available(self.id) is False \
-                    or promocode not in self.promo_list:
-                promocode = None
-            else:
-                promocode.add_user_who_used(self.id)
-
-        order = Order(
-            order_id=uuid.uuid4(),
-            product_list=self.cart_list,
-            promocode=promocode,
-            payment=payment,
-        )
-
-        self.cart_list = []
-        return order
 
     def __str__(self):
         return f"{self.name}\n{self.surname}\n{self._mail}"
