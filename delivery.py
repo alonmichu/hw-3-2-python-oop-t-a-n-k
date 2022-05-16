@@ -40,10 +40,7 @@ def collect_item(p: ProductInOrder) -> Union[None, ProductInOrder]:
                 p.cnt = p1.amount
                 p1.amount = 0
             return p
-        else:
-            return None
-    else:
-        return None
+    return None
 
 
 def collect_order(order: Order) -> None:
