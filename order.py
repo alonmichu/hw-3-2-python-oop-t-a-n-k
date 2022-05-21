@@ -26,6 +26,7 @@ class Order:  # Заказ
                  promocode: Promocode = None,
                  payment: Payment = Payment.CARD, urgency: Urgency = Urgency.ASAP):
         self.id = order_id
+        self.address = address
         self._order_status: OrderStatus = OrderStatus.NEW
         self._product_list: List[ProductInOrder] = product_list
         self._starting_price = self.calculate_cost()  # Исходная цена заказа (без скидок)
@@ -38,7 +39,6 @@ class Order:  # Заказ
             self._total_price = self.apply_promocode()
         else:
             self._total_price = self._starting_price
-        self.address = address
 
     # Геттеры
     @property

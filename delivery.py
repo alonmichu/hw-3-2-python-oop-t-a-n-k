@@ -79,7 +79,7 @@ if __name__ == '__main__':
     p_1 = Product(product_name='apple', description='green apple')
     p_2 = Product(product_name='apple', description='red apple')
     p_3 = Product(product_name='chocolate', description='bitter chocolate 100g')
-    p_4 = Product(product_name='bananas', description='-')
+    p_4 = Product(product_name='ba-na-na-ba-na-na-nas', description='-')
     p_5 = Product(product_name='manga', description='yellow sweet manga')
 
     # формируем список продуктов в соответствующем магазине
@@ -98,8 +98,8 @@ if __name__ == '__main__':
             print(j)
 
     # клиенты
-    client_1 = DB.create_client(name='Vanya', surname='Petrov', phone='987539487',
-                                mail='Petr234@mail.ru', address='Ukhtomskogo 21')
+    client_1 = DB.create_client(name='Vanya', surname='Petrov', address='Ukhtomskogo 21',
+                                mail='Petr234@mail.ru', phone='987539487')
     client_2 = DB.create_client(name='Petr', surname='Ivanov', phone='987534112',
                                 mail='Ivan1@mail.ru', address='Uglicheskay 5')
 
@@ -131,7 +131,7 @@ if __name__ == '__main__':
     courier_2 = DB.create_courier(courier_name="Ivan", courier_surname="Kuznetsov", age=21)
     courier_3 = DB.create_courier(courier_name="Vladimir", courier_surname="Sokolov", age=56,
                                   urgency=Urgency.URGENT)
-    courier_4 = DB.create_courier(courier_name="Nikolay", courier_surname="Novikov", age=42)
+    courier_4 = DB.create_courier(courier_name="Nikolay", courier_surname="Novikovische", age=42)
     courier_5 = DB.create_courier(courier_name="Vasiliy", courier_surname="Morozov", age=38,
                                   urgency=Urgency.URGENT)
 

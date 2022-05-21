@@ -7,23 +7,16 @@ from typing import List, Union
 
 class Client:
 
-    def __init__(self, client_id: UUID, name: str, surname: str, phone: str, mail: str, address: str):
+    def __init__(self, client_id: UUID, name: str, surname: str,
+                 address: str, mail: str, phone: str):
         self.id = client_id
         self.name = name
         self.surname = surname
         self.address = address
-        self.__phone = phone
         self._mail = mail
         self._cart_list: List[ProductInOrder] = []
         self._promo_list: List[Promocode] = []
-
-    @property
-    def phone(self):
-        return self.__phone
-
-    @phone.setter
-    def phone(self, new_phone: str):
-        self.__phone = new_phone
+        self.__phone = phone
 
     @property
     def mail(self):
@@ -37,17 +30,33 @@ class Client:
     def cart_list(self):
         return self._cart_list
 
+    # @cart_list.setter
+    # def cart_list(self, cart_elem: ProductInOrder):
+    #     self._cart_list += [cart_elem]
+
     @cart_list.setter
-    def cart_list(self, cart_elem: ProductInOrder):
-        self._cart_list += [cart_elem]
+    def cart_list(self, cart: List[ProductInOrder]):
+        self._cart_list = cart
 
     @property
     def promo_list(self):
         return self._promo_list
 
+    # @promo_list.setter
+    # def promo_list(self, promo: Promocode):
+    #     self._promo_list += [promo]
+
     @promo_list.setter
-    def promo_list(self, promo: Promocode):
-        self._promo_list += [promo]
+    def promo_list(self, promo: List[Promocode]):
+        self._promo_list = promo
+
+    @property
+    def phone(self):
+        return self.__phone
+
+    @phone.setter
+    def phone(self, new_phone: str):
+        self.__phone = new_phone
 
     # формирование отзыва
     def full_review(self, review: str) -> str:

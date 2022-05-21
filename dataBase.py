@@ -133,9 +133,9 @@ class PythonDb(metaclass=SingletonMeta):
             client_id=client_uuid,
             name=name,
             surname=surname,
-            phone=phone,
+            address=address,
             mail=mail,
-            address=address
+            phone=phone
         ))
 
     @_add_uuid
