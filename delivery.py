@@ -31,16 +31,16 @@ def checkout(client: Client, payment: Payment, address: str,
     return order
 
 
-def collect_item(p: ProductInOrder) -> Union[None, ProductInOrder]:
-    p1 = DB.products.find(p.id)
-    if p1 is not None:
-        if p1.amount > 0:
-            if p1.amount >= p.cnt:
-                p1.amount -= p.cnt
+def collect_item(product: ProductInOrder) -> Union[None, ProductInOrder]:
+    product1 = DB.products.find(product.id)
+    if product1 is not None:
+        if product1.amount > 0:
+            if product1.amount >= product.cnt:
+                product1.amount -= product.cnt
             else:
-                p.cnt = p1.amount
-                p1.amount = 0
-            return p
+                product.cnt = product1.amount
+                product1.amount = 0
+            return product
     return None
 
 
@@ -62,7 +62,7 @@ def collect_order(order: Order) -> None:
 def get_in_delivery(order: Order) -> None:
     order.courier = choice(DB.get_free_couriers(order.urgency))
     order.courier.status = CourierStatus.DELIVERING
-    order.order_status = OrderStatus.SENT
+    order.order_status = OrderStatus.READY_FOR_DELIVERY
 
 
 def finish_order(order: Order) -> None:
@@ -77,20 +77,20 @@ if __name__ == '__main__':
     shop_3 = DB.create_shop(name='Lenta')
 
     # продукты
-    p_1 = DB.create_good(product_name='apple', description='green apple')
-    p_2 = DB.create_good(product_name='apple', description='red apple')
-    p_3 = DB.create_good(product_name='chocolate', description='bitter chocolate 100g')
-    p_4 = DB.create_good(product_name='ba-na-na-ba-na-na-nas', description='-')
-    p_5 = DB.create_good(product_name='manga', description='yellow sweet manga')
+    product1 = DB.create_good(product_name='apple', description='green apple')
+    product2 = DB.create_good(product_name='apple', description='red apple')
+    product3 = DB.create_good(product_name='chocolate', description='bitter chocolate 100g')
+    product4 = DB.create_good(product_name='ba-na-na-ba-na-na-nas', description='-')
+    product5 = DB.create_good(product_name='manga', description='yellow sweet manga')
 
     # формируем список продуктов в соответствующем магазине
-    p_sh_a_1 = DB.create_product(product=p_1, shop=shop_1, amount=12, price=23.20)
-    p_sh_a_2 = DB.create_product(product=p_1, shop=shop_2.id, amount=3, price=24.00)
-    p_sh_a_3 = DB.create_product(product=p_2, shop=shop_2, amount=5, price=25.50)
-    p_sh_a_4 = DB.create_product(product=p_3, shop=shop_3.id, amount=8, price=105)
-    p_sh_a_5 = DB.create_product(product=p_4, shop=shop_3, amount=25, price=15.35)
-    p_sh_a_6 = DB.create_product(product=p_5, shop=shop_3, amount=4, price=180.50)
-    p_sh_a_7 = DB.create_product(product=p_5, shop=shop_2.id, amount=2, price=155.60)
+    prod_available_1 = DB.create_product(product=product1, shop=shop_1, amount=12, price=23.20)
+    prod_available_2 = DB.create_product(product=product1, shop=shop_2.id, amount=3, price=24.00)
+    prod_available_3 = DB.create_product(product=product2, shop=shop_2, amount=5, price=25.50)
+    prod_available_4 = DB.create_product(product=product3, shop=shop_3.id, amount=8, price=105)
+    prod_available_5 = DB.create_product(product=product4, shop=shop_3, amount=25, price=15.35)
+    prod_available_6 = DB.create_product(product=product5, shop=shop_3, amount=4, price=180.50)
+    prod_available_7 = DB.create_product(product=product5, shop=shop_2.id, amount=2, price=155.60)
 
     # список товаров в выбранном магазине
     for i in DB.get_shops_list():
@@ -105,13 +105,13 @@ if __name__ == '__main__':
                                 mail='Ivan1@mail.ru', address='Uglicheskay 5')
 
     # добавление/удаление продуктов из корзины
-    client_2.add_to_cartlist(product=p_sh_a_3, count=2)
-    client_1.add_to_cartlist(product=p_sh_a_6, count=3)
-    client_1.add_to_cartlist(product=p_sh_a_5, count=5)
-    client_1.add_to_cartlist(product=p_sh_a_4, count=9)
-    client_1.add_to_cartlist(product=p_sh_a_2, count=3)
-    client_1.del_from_cartlist(product=p_sh_a_1)
-    client_1.del_from_cartlist(product=p_sh_a_5)
+    client_2.add_to_cartlist(product=prod_available_3, count=2)
+    client_1.add_to_cartlist(product=prod_available_6, count=3)
+    client_1.add_to_cartlist(product=prod_available_5, count=5)
+    client_1.add_to_cartlist(product=prod_available_4, count=9)
+    client_1.add_to_cartlist(product=prod_available_2, count=3)
+    client_1.del_from_cartlist(product=prod_available_1)
+    client_1.del_from_cartlist(product=prod_available_5)
 
     # администратор(создает и выдает промокоды клиентам)
     admin = Admin()
@@ -129,7 +129,7 @@ if __name__ == '__main__':
     # курьеры
     courier_1 = DB.create_courier(courier_name="Stepan", courier_surname="Musorskiy",
                                   age=34, urgency=Urgency.URGENT)
-    courier_2 = DB.create_courier(courier_name="Ivan", courier_surname="Kuznetsov", age=21)
+    courier_2 = DB.create_courier(courier_name="Ivanessa", courier_surname="Kuznetsova", age=21)
     courier_3 = DB.create_courier(courier_name="Vladimir", courier_surname="Sokolov", age=56,
                                   urgency=Urgency.URGENT)
     courier_4 = DB.create_courier(courier_name="Nikolay", courier_surname="Novikovische", age=42)
@@ -146,8 +146,8 @@ if __name__ == '__main__':
     print(order_1)
 
     # оставить отзыв на продукт
-    client_1.add_review(p_3, mark_star=Star_mark.EXCELLENT, review_text='very tasty')
-    print(p_3.see_review())
+    client_1.add_review(product3, mark_star=Star_mark.EXCELLENT, review_text='very tasty')
+    print(product3.see_review())
 
     # сборка,доставка заказа 2
     collect_order(order_2)

@@ -12,7 +12,7 @@ from datetime import datetime
 class OrderStatus(Enum):  # Статусы заказа
     NEW = 1
     ASSEMBLY = 2
-    SENT = 3
+    READY_FOR_DELIVERY = 3
     DELIVERED = 4
 
 
