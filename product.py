@@ -1,6 +1,12 @@
+from typing import List
+from review import Review, Star_mark
+from uuid import UUID
+
+
 class Product:
 
-    def __init__(self, product_name: str, description: str = None):
+    def __init__(self, product_id: UUID, product_name: str, description: str = None):
+        self.id = product_id
         self.name = product_name
         if description is not None:
             self.description = description
@@ -11,11 +17,15 @@ class Product:
         return self._review_list
 
     @review_list.setter
-    def review_list(self, review: str):
-        self._review_list += [review]
+    def review_list(self, review: List[str]):
+        self._review_list = review
+
+    def add_review(self, new_review: str) -> None:
+        self.review_list += [new_review]
 
     def see_review(self):
-        return f"{self._review_list}"
+        for i in range(len(self.review_list)):
+            print(self.review_list[i])
 
     def __str__(self):
         return f"{self.name}:{self.description}"

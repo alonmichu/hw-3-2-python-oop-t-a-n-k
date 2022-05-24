@@ -15,4 +15,4 @@ class Admin(metaclass=SingletonMeta):
     @staticmethod
     def send_promocode(clients: List[Client], promocode: Promocode):
         for client in clients:
-            client.promo_list = promocode
+            client.add_promo(promocode)

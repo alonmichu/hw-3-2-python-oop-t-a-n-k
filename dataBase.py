@@ -71,6 +71,7 @@ class PythonDb(metaclass=SingletonMeta):
         self.couriers: Container = Container(Courier)
         self.clients: Container = Container(Client)
         self.shops: Container = Container(Shop)
+        self.goods: Container = Container(Product)
 
         self._obj_container = {
             Order: self.orders,
@@ -78,6 +79,7 @@ class PythonDb(metaclass=SingletonMeta):
             Courier: self.couriers,
             Client: self.clients,
             Shop: self.shops,
+            Product: self.goods
         }
         self._uuid_container: Dict[UUID] = dict()
 
@@ -163,6 +165,16 @@ class PythonDb(metaclass=SingletonMeta):
         return self.shops.add(shop_uuid, Shop(
             shop_id=shop_uuid,
             shop_name=name
+        ))
+
+    @_add_uuid
+    def create_good(self, product_name: str, description: str = None) -> Union[Product, None]:
+
+        product_uuid = uuid4()
+        return self.goods.add(product_uuid, Product(
+            product_id=product_uuid,
+            product_name=product_name,
+            description=description
         ))
 
     def get_shops_list(self) -> List[Shop]:

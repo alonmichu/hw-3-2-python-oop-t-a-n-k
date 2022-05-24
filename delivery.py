@@ -10,6 +10,7 @@ from promocode import Promocode
 from dataBase import PythonDb
 from productShopAvailability import ProductInOrder
 from random import choice
+from review import Review, Star_mark
 
 DB = PythonDb()
 
@@ -76,11 +77,11 @@ if __name__ == '__main__':
     shop_3 = DB.create_shop(name='Lenta')
 
     # продукты
-    p_1 = Product(product_name='apple', description='green apple')
-    p_2 = Product(product_name='apple', description='red apple')
-    p_3 = Product(product_name='chocolate', description='bitter chocolate 100g')
-    p_4 = Product(product_name='ba-na-na-ba-na-na-nas', description='-')
-    p_5 = Product(product_name='manga', description='yellow sweet manga')
+    p_1 = DB.create_good(product_name='apple', description='green apple')
+    p_2 = DB.create_good(product_name='apple', description='red apple')
+    p_3 = DB.create_good(product_name='chocolate', description='bitter chocolate 100g')
+    p_4 = DB.create_good(product_name='ba-na-na-ba-na-na-nas', description='-')
+    p_5 = DB.create_good(product_name='manga', description='yellow sweet manga')
 
     # формируем список продуктов в соответствующем магазине
     p_sh_a_1 = DB.create_product(product=p_1, shop=shop_1, amount=12, price=23.20)
@@ -135,7 +136,7 @@ if __name__ == '__main__':
     courier_5 = DB.create_courier(courier_name="Vasiliy", courier_surname="Morozov", age=38,
                                   urgency=Urgency.URGENT)
 
-    # сборка,доставка заказа 1
+    # сборка, доставка заказа 1
     print('Order1:')
     print(order_1)
     collect_order(order_1)
@@ -145,7 +146,7 @@ if __name__ == '__main__':
     print(order_1)
 
     # оставить отзыв на продукт
-    client_1.add_review(product=p_3, review='very tasty')
+    client_1.add_review(p_3, mark_star=Star_mark.EXCELLENT, review_text='very tasty')
     print(p_3.see_review())
 
     # сборка,доставка заказа 2
