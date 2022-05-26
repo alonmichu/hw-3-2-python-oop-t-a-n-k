@@ -13,6 +13,6 @@ class Admin(metaclass=SingletonMeta):
         return Promocode(percent)
 
     @staticmethod
-    def send_promocode(clients: List[Client], promocode: Promocode):
+    def send_promocode(clients: List[Client], promocode: Promocode) -> None:
         for client in clients:
             client.add_promo(promocode)

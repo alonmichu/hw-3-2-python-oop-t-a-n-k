@@ -21,6 +21,6 @@ class Review:
         new_text = input("write edited text here: ")
         self.text = new_text
 
-    def show(self):
+    def show(self) -> None:
         print(f"{self.client_name} {self.client_surname}: {self.star.value}\n"
               f"    {self.text}\n")

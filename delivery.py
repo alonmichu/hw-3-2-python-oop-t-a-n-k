@@ -59,9 +59,13 @@ def collect_order(order: Order) -> None:
 
 
 def get_in_delivery(order: Order) -> None:
-    order.courier = choice(DB.get_free_couriers(order.urgency))
-    order.courier.status = CourierStatus.DELIVERING
-    order.order_status = OrderStatus.READY_FOR_DELIVERY
+    try:
+        order.courier = choice(DB.get_free_couriers(order.urgency))
+    except IndexError:
+        print("No free couriers")
+    else:
+        order.courier.status = CourierStatus.DELIVERING
+        order.order_status = OrderStatus.READY_FOR_DELIVERY
 
 
 def finish_order(order: Order) -> None:
@@ -108,8 +112,6 @@ if __name__ == '__main__':
     client_1.add_to_cartlist(product=prod_available_6, count=3)
     client_1.add_to_cartlist(product=prod_available_5, count=5)
     client_1.add_to_cartlist(product=prod_available_4, count=9)
-    client_1.add_to_cartlist(product=prod_available_2, count=3)
-    client_1.del_from_cartlist(product=prod_available_1)
     client_1.del_from_cartlist(product=prod_available_5)
 
     # администратор(создает и выдает промокоды клиентам)
@@ -129,6 +131,7 @@ if __name__ == '__main__':
     courier_1 = DB.create_courier(courier_name="Stepan", courier_surname="Musorskiy",
                                   age=34, urgency=Urgency.URGENT)
     courier_2 = DB.create_courier(courier_name="Ivanessa", courier_surname="Kuznetsova", age=21)
+    courier_2.status = CourierStatus.DAY_OFF
     courier_3 = DB.create_courier(courier_name="Vladimir", courier_surname="Sokolov", age=56,
                                   urgency=Urgency.URGENT)
     courier_4 = DB.create_courier(courier_name="Nikolay", courier_surname="Novikovische", age=42)
@@ -152,7 +155,7 @@ if __name__ == '__main__':
     collect_order(order_2)
     get_in_delivery(order_2)
     # просмотр статуса курьера
-    print(courier_5.check_status())
+    # print(courier_5.check_status())
     finish_order(order_2)
     print('Order2:')
     print(order_2)

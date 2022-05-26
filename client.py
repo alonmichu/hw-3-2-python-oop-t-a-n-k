@@ -47,7 +47,7 @@ class Client:
         if self._cart_list:
             if product.shop != self._cart_list[0].shop or \
                     product.amount == 0:
-                print(f"You can't add such product {product}")
+                raise TypeError(f"You can't add such product {product}")
             else:
                 self._cart_list.append(ProductInOrder(product, count))
         else:
@@ -61,12 +61,12 @@ class Client:
         if product.id in cart_dict:
             del self._cart_list[cart_dict[product.id]]
         else:
-            print(f'No such product in cart_list {product}')
+            raise IndexError(f"No such product in cart_list {product}")
 
-    def clean_cart_list(self):
+    def clean_cart_list(self) -> None:
         self._cart_list = []
 
-    def add_promo(self, promo: Promocode):
+    def add_promo(self, promo: Promocode) -> None:
         self._promo_list += [promo]
 
     def del_from_promolist(self, promo: Promocode) -> None:
@@ -76,7 +76,7 @@ class Client:
         if promo.promocode_id in promo_dict:
             del self._cart_list[promo_dict[promo.promocode_id]]
         else:
-            print(f'No such product in cart_list {promo}')
+            raise IndexError(f"No such promo in promo_list {promo}")
 
     def __str__(self):
         return f"{self.name}\n{self.surname}\n{self.mail}"

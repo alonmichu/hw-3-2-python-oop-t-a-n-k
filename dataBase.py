@@ -104,41 +104,44 @@ class PythonDb(metaclass=SingletonMeta):
     def create_product(self, product: Product, shop: Union[Shop, UUID], amount: int,
                        price: float) -> Union[ProductShopAvailability, None]:
         prod_uuid = uuid4()
-        return self.products.add(
-            prod_uuid,
-            ProductShopAvailability(
+        prod_shop_av = ProductShopAvailability(
                 product_id=prod_uuid,
                 product=product,
                 shop=shop.id if isinstance(shop, Shop) else shop,
                 amount=amount,
-                price=Decimal(price),
-            )
+                price=Decimal(price)
         )
+        self.products.add(prod_uuid, prod_shop_av)
+        return prod_shop_av
 
     @_add_uuid
     def create_courier(self, courier_name: str, courier_surname: str,
                        age: int, urgency: Urgency = Urgency.ASAP) -> Union[Courier, None]:
         courier_uuid = uuid4()
-        return self.couriers.add(courier_uuid, Courier(
+        courier = Courier(
             courier_id=courier_uuid,
             name=courier_name,
             surname=courier_surname,
             age=age,
             urgency=urgency
-        ))
+        )
+        self.couriers.add(courier_uuid, courier)
+        return courier
 
     @_add_uuid
     def create_client(self, name: str, surname: str, phone: str, mail: str, address: str) \
             -> Union[Client, None]:
         client_uuid = uuid4()
-        return self.clients.add(client_uuid, Client(
+        client = Client(
             client_id=client_uuid,
             name=name,
             surname=surname,
             address=address,
             mail=mail,
             phone=phone
-        ))
+        )
+        self.clients.add(client_uuid, client)
+        return client
 
     @_add_uuid
     def create_order(self, address: str, client_obj: Client,
@@ -149,33 +152,39 @@ class PythonDb(metaclass=SingletonMeta):
         product_list = client_obj.cart_list
 
         order_uuid = uuid4()
-        return self.orders.add(order_uuid, Order(
+        order = Order(
             order_id=order_uuid,
             address=address,
             product_list=product_list,
             promocode=promocode,
             payment=payment,
             urgency=urgency
-        ))
+        )
+        self.orders.add(order_uuid, order)
+        return order
 
     @_add_uuid
     def create_shop(self, name: str) -> Union[Shop, None]:
 
         shop_uuid = uuid4()
-        return self.shops.add(shop_uuid, Shop(
+        shop = Shop(
             shop_id=shop_uuid,
             shop_name=name
-        ))
+        )
+        self.shops.add(shop_uuid, shop)
+        return shop
 
     @_add_uuid
     def create_good(self, product_name: str, description: str = None) -> Union[Product, None]:
 
         product_uuid = uuid4()
-        return self.goods.add(product_uuid, Product(
+        product = Product(
             product_id=product_uuid,
             product_name=product_name,
             description=description
-        ))
+        )
+        self.goods.add(product_uuid, product)
+        return product
 
     def get_shops_list(self) -> List[Shop]:
         return self.shops.get_all()
