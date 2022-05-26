@@ -19,38 +19,14 @@ class Courier:
         self.id = courier_id
         self.name = name
         self.surname = surname
-        self._age = age
-        self._urgency = urgency
-        self._status: CourierStatus = CourierStatus.FREE
-
-    @property
-    def age(self):
-        return self._age
-
-    @property
-    def urgency(self):
-        return self._urgency
-
-    @property
-    def status(self):
-        return self._status
-
-    @age.setter
-    def age(self, new_age: int):
-        self._age = new_age
-
-    @urgency.setter
-    def urgency(self, new_urgency: Urgency):
-        self._urgency = new_urgency
-
-    @status.setter
-    def status(self, new_status: CourierStatus):
-        self._status = new_status
+        self.age = age
+        self.urgency = urgency
+        self.status: CourierStatus = CourierStatus.FREE
 
     def check_status(self) -> str:
-        return f"Now {self.name} {self.surname} status is: "\
-               + str(self._status)
+        return f"Now {self.name} {self.surname} status is: " \
+               + str(self.status)
 
     def __str__(self):
         return f"{self.name} " \
-               f"{self.surname} {self._age} y.o."
+               f"{self.surname} {self.age} y.o."

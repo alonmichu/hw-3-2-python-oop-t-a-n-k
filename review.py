@@ -12,20 +12,14 @@ class Star_mark(Enum):
 
 class Review:
     def __init__(self, text: str, star: Star_mark):
-        self._text = text
-        self._star = star
+        self.text = text
+        self.star = star
 
     def edit(self) -> None:
         new_text = input("write edited text here: ")
-        self._text = new_text
+        self.text = new_text
 
     def show(self):
-        print(f"{self._star.value}\n {self._text}")
+        print(f"{self.star.value}\n {self.text}")
 
-    @property
-    def star(self):
-        return self._star
 
-    @property
-    def text(self):
-        return self._text

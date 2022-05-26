@@ -1,5 +1,3 @@
-from typing import List
-from review import Review, Star_mark
 from uuid import UUID
 
 
@@ -10,15 +8,7 @@ class Product:
         self.name = product_name
         if description is not None:
             self.description = description
-        self._review_list = []
-
-    @property
-    def review_list(self):
-        return self._review_list
-
-    @review_list.setter
-    def review_list(self, review: List[str]):
-        self._review_list = review
+        self.review_list = []
 
     def add_review(self, new_review: str) -> None:
         self.review_list += [new_review]

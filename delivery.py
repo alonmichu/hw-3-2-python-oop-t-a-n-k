@@ -3,14 +3,13 @@ from typing import Union
 from courier import CourierStatus, Urgency
 from client import Client
 from order import Payment
-from product import Product
 from admin import Admin
 from order import Order, OrderStatus
 from promocode import Promocode
 from dataBase import PythonDb
 from productShopAvailability import ProductInOrder
 from random import choice
-from review import Review, Star_mark
+from review import Star_mark
 
 DB = PythonDb()
 

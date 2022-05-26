@@ -20,6 +20,7 @@ class ProductInOrder(object):
         self.id = product.id
         self.product_name = product.product.name
         self.shop = product.shop
+        self.amount = product.amount
         self.price = product.price
         self.cnt = count
 

@@ -15,26 +15,14 @@ class Client:
         self.name = name
         self.surname = surname
         self.address = address
-        self._mail = mail
+        self.mail = mail
+        self.phone = phone
         self._cart_list: List[ProductInOrder] = []
         self._promo_list: List[Promocode] = []
-        self.__phone = phone
-
-    @property
-    def mail(self):
-        return self._mail
-
-    @mail.setter
-    def mail(self, new_mail: str):
-        self._mail = new_mail
 
     @property
     def cart_list(self):
         return self._cart_list
-
-    # @cart_list.setter
-    # def cart_list(self, cart_elem: ProductInOrder):
-    #     self._cart_list += [cart_elem]
 
     @cart_list.setter
     def cart_list(self, cart: List[ProductInOrder]):
@@ -44,21 +32,9 @@ class Client:
     def promo_list(self):
         return self._promo_list
 
-    # @promo_list.setter
-    # def promo_list(self, promo: Promocode):
-    #     self._promo_list += [promo]
-
     @promo_list.setter
     def promo_list(self, promo: List[Promocode]):
         self._promo_list = promo
-
-    @property
-    def phone(self):
-        return self.__phone
-
-    @phone.setter
-    def phone(self, new_phone: str):
-        self.__phone = new_phone
 
     # формирование отзыва
     def full_review(self, product: Product, review: Review) -> str:
@@ -108,4 +84,4 @@ class Client:
             print(f'No such product in cart_list {promo}')
 
     def __str__(self):
-        return f"{self.name}\n{self.surname}\n{self._mail}"
+        return f"{self.name}\n{self.surname}\n{self.mail}"
