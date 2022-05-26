@@ -145,8 +145,8 @@ if __name__ == '__main__':
     print(order_1)
 
     # оставить отзыв на продукт
-    client_1.add_review(product3, mark_star=Star_mark.EXCELLENT, review_text='very tasty')
-    print(product3.see_review())
+    client_1.write_review(product3, mark_star=Star_mark.EXCELLENT, review_text='very tasty')
+    product3.see_review()
 
     # сборка,доставка заказа 2
     collect_order(order_2)

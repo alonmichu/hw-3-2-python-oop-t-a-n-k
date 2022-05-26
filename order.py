@@ -3,7 +3,7 @@ from courier import Urgency
 from uuid import UUID
 from promocode import Promocode
 from typing import List
-from productShopAvailability import ProductShopAvailability, ProductInOrder
+from productShopAvailability import ProductInOrder
 from decimal import Decimal
 from datetime import datetime
 
@@ -55,5 +55,5 @@ class Order:  # Заказ
         return f"{d}:{self.order_status}\n" \
                f"starting price:{self.starting_price}\n" \
                f"total price:{self.total_price}\n" \
-               f"courier:{self.courier}" \
+               f"courier:{self.courier}\n" \
                f"date:{self.date_create}"

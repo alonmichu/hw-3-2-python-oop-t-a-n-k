@@ -11,7 +11,9 @@ class Star_mark(Enum):
 
 
 class Review:
-    def __init__(self, text: str, star: Star_mark):
+    def __init__(self, name: str, surname: str, text: str, star: Star_mark):
+        self.client_name = name
+        self.client_surname = surname
         self.text = text
         self.star = star
 
@@ -20,6 +22,5 @@ class Review:
         self.text = new_text
 
     def show(self):
-        print(f"{self.star.value}\n {self.text}")
-
-
+        print(f"{self.client_name} {self.client_surname}: {self.star.value}\n"
+              f"    {self.text}\n")

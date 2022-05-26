@@ -36,16 +36,11 @@ class Client:
     def promo_list(self, promo: List[Promocode]):
         self._promo_list = promo
 
-    # формирование отзыва
-    def full_review(self, product: Product, review: Review) -> str:
-        return f"Review for {product.name}\n" \
-               f"{self.name} {self.surname}: {review.star.value}\n{review.text}\n"
-
     # добавление отзыва на конкретный продукт
-    def add_review(self, product: Product,
-                   mark_star: Star_mark, review_text: str) -> None:
-        review = Review(text=review_text, star=mark_star)
-        product.add_review(self.full_review(product, review))
+    def write_review(self, product: Product,
+                     mark_star: Star_mark, review_text: str) -> None:
+        review = Review(name=self.name, surname=self.surname, text=review_text, star=mark_star)
+        product.add_review(review)
 
     def add_to_cartlist(self, product: ProductShopAvailability,
                         count: int) -> None:
