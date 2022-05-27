@@ -14,5 +14,6 @@ class Admin(metaclass=SingletonMeta):
 
     @staticmethod
     def send_promocode(clients: List[Client], promocode: Promocode) -> None:
+        # рассылаем клиентам промокоды
         for client in clients:
             client.add_promo(promocode)

@@ -5,7 +5,8 @@ from review import Review
 
 class Product:
 
-    def __init__(self, product_id: UUID, product_name: str, description: str = None):
+    def __init__(self, product_id: UUID, product_name: str,
+                 description: str = None):
         self.id = product_id
         self.name = product_name
         if description is not None:

@@ -2,7 +2,6 @@ from decimal import Decimal
 from functools import wraps
 from typing import Dict, Callable, Union, List
 from uuid import UUID, uuid4
-
 from client import Client
 from courier import Courier, Urgency, CourierStatus
 from order import Order, Payment
@@ -35,7 +34,8 @@ class Container:
     def __delitem__(self, key: UUID) -> bool:
         return self.delete(key)
 
-    def add(self, identifier: UUID, obj, update: bool = False) -> Union[None, Callable]:
+    def add(self, identifier: UUID, obj, update: bool = False) \
+            -> Union[None, Callable]:
         if type(obj) != self._obj_type:
             return None
         if identifier in self._container:
@@ -94,15 +94,18 @@ class PythonDb(metaclass=SingletonMeta):
         return wrapper
 
     @_add_uuid
-    def create_from_obj(self, obj: Union[Order, ProductShopAvailability, Courier, Client]) \
-            -> Union[Order, ProductShopAvailability, Courier, Client, Shop, None]:
+    def create_from_obj(self, obj: Union[Order, ProductShopAvailability,
+                                         Courier, Client]) \
+            -> Union[Order, ProductShopAvailability,
+                     Courier, Client, Shop, None]:
         if type(obj) in self._obj_container:
             self._obj_container[type(obj)].add(obj.id, obj)
             return self._obj_container[type(obj)].find(obj.id)
 
     @_add_uuid
-    def create_product(self, product: Product, shop: Union[Shop, UUID], amount: int,
-                       price: float) -> Union[ProductShopAvailability, None]:
+    def create_product(self, product: Product, shop: Union[Shop, UUID],
+                       amount: int, price: float) \
+            -> Union[ProductShopAvailability, None]:
         prod_uuid = uuid4()
         prod_shop_av = ProductShopAvailability(
                 product_id=prod_uuid,
@@ -116,7 +119,8 @@ class PythonDb(metaclass=SingletonMeta):
 
     @_add_uuid
     def create_courier(self, courier_name: str, courier_surname: str,
-                       age: int, urgency: Urgency = Urgency.ASAP) -> Union[Courier, None]:
+                       age: int, urgency: Urgency = Urgency.ASAP) \
+            -> Union[Courier, None]:
         courier_uuid = uuid4()
         courier = Courier(
             courier_id=courier_uuid,
@@ -129,7 +133,8 @@ class PythonDb(metaclass=SingletonMeta):
         return courier
 
     @_add_uuid
-    def create_client(self, name: str, surname: str, phone: str, mail: str, address: str) \
+    def create_client(self, name: str, surname: str, phone: str,
+                      mail: str, address: str) \
             -> Union[Client, None]:
         client_uuid = uuid4()
         client = Client(
@@ -176,7 +181,8 @@ class PythonDb(metaclass=SingletonMeta):
         return shop
 
     @_add_uuid
-    def create_good(self, product_name: str, description: str = None) -> Union[Product, None]:
+    def create_good(self, product_name: str, description: str = None) \
+            -> Union[Product, None]:
 
         product_uuid = uuid4()
         product = Product(
@@ -190,13 +196,19 @@ class PythonDb(metaclass=SingletonMeta):
     def get_shops_list(self) -> List[Shop]:
         return self.shops.get_all()
 
-    def get_products_in_shop(self, shop: Union[UUID, Shop]) -> List[ProductShopAvailability]:
+    def get_couriers_list(self) -> List[Courier]:
+        return self.couriers.get_all()
+
+    def get_products_in_shop(self, shop: Union[UUID, Shop]) \
+            -> List[ProductShopAvailability]:
         shop_id = shop if isinstance(shop, UUID) else shop.id
-        return [product for product in self.products.values() if product.shop == shop_id]
+        return [product for product in self.products.values()
+                if product.shop == shop_id]
 
     def get_free_couriers(self, urgency: Urgency) -> List[Courier]:
         available_couriers = []
         for courier in self.couriers.values():
-            if courier.urgency == urgency and courier.status == CourierStatus.FREE:
+            if courier.urgency == urgency and \
+               courier.status == CourierStatus.FREE:
                 available_couriers.append(courier)
         return available_couriers

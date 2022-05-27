@@ -21,9 +21,11 @@ class Payment(Enum):  # Способы оплаты
 
 
 class Order:  # Заказ
-    def __init__(self, order_id: UUID, address: str, client_id: UUID, product_list: List[ProductInOrder],
+    def __init__(self, order_id: UUID, address: str, client_id: UUID,
+                 product_list: List[ProductInOrder],
                  promocode: Promocode = None,
-                 payment: Payment = Payment.CARD, urgency: Urgency = Urgency.ASAP):
+                 payment: Payment = Payment.CARD,
+                 urgency: Urgency = Urgency.ASAP):
         self.id = order_id
         self.client_id = client_id
         self.address = address

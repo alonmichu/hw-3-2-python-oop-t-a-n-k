@@ -22,5 +22,10 @@ class Review:
         self.text = new_text
 
     def show(self) -> None:
-        print(f"{self.client_name} {self.client_surname}: {self.star.value}\n"
-              f"    {self.text}\n")
+        review = self.client_name + " " + self.client_surname + ":\n"
+        for i in range(self.star.value):
+            review += "⧫"
+        for i in range(5 - self.star.value):
+            review += "◊"
+        review += "\n" + self.text + "\n"
+        print(review)

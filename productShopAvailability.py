@@ -4,7 +4,8 @@ from uuid import UUID
 
 
 class ProductShopAvailability:  # Зависимость продукт - заказ
-    def __init__(self, product_id: UUID, product: Product, shop: UUID, amount: int, price: Decimal):
+    def __init__(self, product_id: UUID, product: Product,
+                 shop: UUID, amount: int, price: Decimal):
         self.id = product_id
         self.product = product  # Продукт
         self.shop = shop  # Магазин
@@ -17,7 +18,8 @@ class ProductShopAvailability:  # Зависимость продукт - зак
 
 class ProductInOrder(ProductShopAvailability):
     def __init__(self, product: ProductShopAvailability, count: int):
-        super().__init__(product.id, product.product, product.shop, product.amount, product.price)
+        super().__init__(product.id, product.product, product.shop,
+                         product.amount, product.price)
         self.cnt = count
 
     def __str__(self):

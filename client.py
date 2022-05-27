@@ -39,7 +39,8 @@ class Client:
     # добавление отзыва на конкретный продукт
     def write_review(self, product: Product,
                      mark_star: Star_mark, review_text: str) -> None:
-        review = Review(name=self.name, surname=self.surname, text=review_text, star=mark_star)
+        review = Review(name=self.name, surname=self.surname,
+                        text=review_text, star=mark_star)
         product.add_review(review)
 
     def add_to_cartlist(self, product: ProductShopAvailability,
@@ -57,7 +58,6 @@ class Client:
                           product: Union[ProductInOrder,
                                          ProductShopAvailability]) -> None:
         cart_dict = {prod.id: i for i, prod in enumerate(self._cart_list)}
-
         if product.id in cart_dict:
             del self._cart_list[cart_dict[product.id]]
         else:
@@ -72,7 +72,6 @@ class Client:
     def del_from_promolist(self, promo: Promocode) -> None:
         promo_dict = {it_promo.promocode_id: i for i, it_promo
                       in enumerate(self._promo_list)}
-
         if promo.promocode_id in promo_dict:
             del self._cart_list[promo_dict[promo.promocode_id]]
         else:
