@@ -51,7 +51,7 @@ class Order:  # Заказ
         return res.quantize(Decimal('.01'))
 
     def __str__(self):
-        d = {prod.product_name: prod.cnt for prod in self.product_list}
+        d = {prod.product.name: prod.cnt for prod in self.product_list}
         return f"{d}:{self.order_status}\n" \
                f"starting price:{self.starting_price}\n" \
                f"total price:{self.total_price}\n" \

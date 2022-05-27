@@ -15,14 +15,10 @@ class ProductShopAvailability:  # Зависимость продукт - зак
         return f"{self.product},{self.amount}"
 
 
-class ProductInOrder(object):
+class ProductInOrder(ProductShopAvailability):
     def __init__(self, product: ProductShopAvailability, count: int):
-        self.id = product.id
-        self.product_name = product.product.name
-        self.shop = product.shop
-        self.amount = product.amount
-        self.price = product.price
+        super().__init__(product.id, product.product, product.shop, product.amount, product.price)
         self.cnt = count
 
     def __str__(self):
-        return f"{self.product_name},{self.cnt}"
+        return f"{self.product.name},{self.cnt}"
