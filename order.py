@@ -21,10 +21,11 @@ class Payment(Enum):  # Способы оплаты
 
 
 class Order:  # Заказ
-    def __init__(self, order_id: UUID, address: str, product_list: List[ProductInOrder],
+    def __init__(self, order_id: UUID, address: str, client_id: UUID, product_list: List[ProductInOrder],
                  promocode: Promocode = None,
                  payment: Payment = Payment.CARD, urgency: Urgency = Urgency.ASAP):
         self.id = order_id
+        self.client_id = client_id
         self.address = address
         self.order_status: OrderStatus = OrderStatus.NEW
         self.product_list: List[ProductInOrder] = product_list
@@ -37,7 +38,7 @@ class Order:  # Заказ
         if self.promocode is not None:
             self.total_price = self.apply_promocode()
         else:
-            self.total_price = self._starting_price
+            self.total_price = self.starting_price
 
     def apply_promocode(self) -> Decimal:
         sale = Decimal(1 - self.promocode.percent / 100) * Decimal(1.00)

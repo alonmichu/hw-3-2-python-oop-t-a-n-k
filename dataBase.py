@@ -158,7 +158,8 @@ class PythonDb(metaclass=SingletonMeta):
             product_list=product_list,
             promocode=promocode,
             payment=payment,
-            urgency=urgency
+            urgency=urgency,
+            client_id=client_obj.id
         )
         self.orders.add(order_uuid, order)
         return order
