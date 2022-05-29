@@ -5,8 +5,6 @@ from dataBase import SingletonMeta
 
 
 class Admin(metaclass=SingletonMeta):
-    def __init__(self):
-        pass
 
     @staticmethod
     def generate_promocode(percent: int) -> Promocode:

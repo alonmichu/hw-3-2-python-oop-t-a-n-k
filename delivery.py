@@ -220,7 +220,7 @@ if __name__ == '__main__':
                                   age=34, urgency=Urgency.URGENT)
     courier_2 = DB.create_courier(courier_name="Ivanessa",
                                   courier_surname="Kuznetsova", age=21)
-    courier_2.status = CourierStatus.DAY_OFF
+    courier_2.status = CourierStatus.OFF
     courier_3 = DB.create_courier(courier_name="Vladimir",
                                   courier_surname="Sokolov", age=56,
                                   urgency=Urgency.URGENT)

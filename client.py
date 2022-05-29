@@ -17,24 +17,8 @@ class Client:
         self.address = address
         self.mail = mail
         self.phone = phone
-        self._cart_list: List[ProductInOrder] = []
-        self._promo_list: List[Promocode] = []
-
-    @property
-    def cart_list(self):
-        return self._cart_list
-
-    @cart_list.setter
-    def cart_list(self, cart: List[ProductInOrder]):
-        self._cart_list = cart
-
-    @property
-    def promo_list(self):
-        return self._promo_list
-
-    @promo_list.setter
-    def promo_list(self, promo: List[Promocode]):
-        self._promo_list = promo
+        self.cart_list: List[ProductInOrder] = []
+        self.promo_list: List[Promocode] = []
 
     # добавление отзыва на конкретный продукт
     def write_review(self, product: Product,
@@ -45,35 +29,40 @@ class Client:
 
     def add_to_cartlist(self, product: ProductShopAvailability,
                         count: int) -> None:
-        if self._cart_list:
-            if product.shop != self._cart_list[0].shop or \
+        if self.cart_list:
+            if product.shop != self.cart_list[0].shop or \
                     product.amount == 0:
                 raise TypeError(f"You can't add such product {product}")
             else:
-                self._cart_list.append(ProductInOrder(product, count))
+                self.cart_list.append(ProductInOrder(product, count))
         else:
-            self._cart_list.append(ProductInOrder(product, count))
+            self.cart_list.append(ProductInOrder(product, count))
 
     def del_from_cartlist(self,
                           product: Union[ProductInOrder,
                                          ProductShopAvailability]) -> None:
-        cart_dict = {prod.id: i for i, prod in enumerate(self._cart_list)}
-        if product.id in cart_dict:
-            del self._cart_list[cart_dict[product.id]]
+        i = -1
+        for j, p in enumerate(self.cart_list):
+            if product.id == p.id:
+                i = j
+        if i != -1:
+            del self.cart_list[i]
         else:
             raise IndexError(f"No such product in cart_list {product}")
 
     def clean_cart_list(self) -> None:
-        self._cart_list = []
+        self.cart_list = []
 
     def add_promo(self, promo: Promocode) -> None:
-        self._promo_list += [promo]
+        self.promo_list += [promo]
 
     def del_from_promolist(self, promo: Promocode) -> None:
-        promo_dict = {it_promo.promocode_id: i for i, it_promo
-                      in enumerate(self._promo_list)}
-        if promo.promocode_id in promo_dict:
-            del self._cart_list[promo_dict[promo.promocode_id]]
+        i = -1
+        for j, p in enumerate(self.promo_list):
+            if promo.promocode_id == p.promocode_id:
+                i = j
+        if i != -1:
+            del self.promo_list[i]
         else:
             raise IndexError(f"No such promo in promo_list {promo}")
 

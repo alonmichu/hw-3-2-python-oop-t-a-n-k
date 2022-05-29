@@ -10,7 +10,7 @@ class Urgency(Enum):
 class CourierStatus(Enum):
     FREE = 1  # свободен, как ветер, можно юзать
     DELIVERING = 2  # доставляет
-    DAY_OFF = 3  # не боспокойте, у него выходной
+    OFF = 3  # не боспокойте, у него выходной
 
 
 class Courier:

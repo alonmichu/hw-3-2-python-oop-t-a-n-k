@@ -17,15 +17,11 @@ class Review:
         self.text = text
         self.star = star
 
-    def edit(self) -> None:
-        new_text = input("write edited text here: ")
+    def edit(self, new_text: str) -> None:
         self.text = new_text
 
-    def show(self) -> None:
-        review = self.client_name + " " + self.client_surname + ":\n"
-        for i in range(self.star.value):
-            review += "⧫"
-        for i in range(5 - self.star.value):
-            review += "◊"
-        review += "\n" + self.text + "\n"
-        print(review)
+    def full_review_text(self) -> str:
+        review = self.client_name + " " + self.client_surname + ":\n" + "⧫" * \
+                 self.star.value + "◊" * (5 - self.star.value) + \
+                 "\n" + self.text + "\n"
+        return review

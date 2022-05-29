@@ -19,7 +19,7 @@ class Product:
     def see_review(self) -> None:
         print(f"Review for {self.name}")
         for i in range(len(self.review_list)):
-            self.review_list[i].show()
+            print(self.review_list[i].full_review_text())
 
     def __str__(self):
         return f"{self.name}:{self.description}"
