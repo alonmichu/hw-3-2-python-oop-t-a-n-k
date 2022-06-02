@@ -50,7 +50,7 @@ class Context:
 class UrgentDelivery(Strategy):
     def delivery(self, order: Order) -> Order:
         available_couriers = DB.get_free_couriers(Urgency.URGENT)
-        order.total_price += urgent_delivery_cost
+        order.total_price = order.calculate_cost(urgent_delivery_cost)
         order.courier = choice(available_couriers)
         if order.courier is not None:
             order.courier.status = CourierStatus.DELIVERING

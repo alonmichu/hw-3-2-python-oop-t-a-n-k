@@ -41,12 +41,12 @@ class Client:
     def del_from_cartlist(self,
                           product: Union[ProductInOrder,
                                          ProductShopAvailability]) -> None:
-        i = -1
-        for j, p in enumerate(self.cart_list):
-            if product.id == p.id:
-                i = j
-        if i != -1:
-            del self.cart_list[i]
+        index = -1
+        for idx, prod in enumerate(self.cart_list):
+            if product.id == prod.id:
+                index = idx
+        if index != -1:
+            del self.cart_list[index]
         else:
             raise IndexError(f"No such product in cart_list {product}")
 
@@ -56,15 +56,15 @@ class Client:
     def add_promo(self, promo: Promocode) -> None:
         self.promo_list += [promo]
 
-    def del_from_promolist(self, promo: Promocode) -> None:
-        i = -1
-        for j, p in enumerate(self.promo_list):
-            if promo.promocode_id == p.promocode_id:
-                i = j
-        if i != -1:
-            del self.promo_list[i]
+    def del_from_promolist(self, promocode: Promocode) -> None:
+        index = -1
+        for idx, promo in enumerate(self.promo_list):
+            if promocode.promocode_id == promo.promocode_id:
+                index = idx
+        if index != -1:
+            del self.promo_list[index]
         else:
-            raise IndexError(f"No such promo in promo_list {promo}")
+            raise IndexError(f"No such promo in promo_list {promocode}")
 
     def __str__(self):
         return f"{self.name}\n{self.surname}\n{self.mail}"

@@ -47,8 +47,11 @@ class Order:  # Заказ
         res = sale * self.starting_price
         return res.quantize(Decimal('.01'))
 
-    def calculate_cost(self) -> Decimal:
-        res = Decimal(0)
+    def calculate_cost(self, added_value: Decimal = Decimal(0)) -> Decimal:
+        if added_value:
+            res = added_value
+        else:
+            res = Decimal(0)
         for product in self.product_list:
             res += product.price * product.cnt
         return res.quantize(Decimal('.01'))
